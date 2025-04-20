@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>hmpmanish | Developer Profile</title>
 
-  <!-- Website Logo / Favicon -->
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/156882775?v=4" />
 
   <!-- Font Awesome Icons -->
@@ -22,7 +22,7 @@
   </div>
 
   <!-- Profile Content -->
-  <main class="container fade-in">
+  <main class="container">
     <section class="profile-card">
 
       <!-- Profile Image -->
@@ -37,22 +37,23 @@
       <div class="social-links">
         <a href="https://github.com/hmpmanish" target="_blank"><i class="fab fa-github"></i></a>
         <a href="https://linkedin.com/in/hmpmanish" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-        <a href="https://twitter.com/hmpmanish" target="_blank"><i class="fab fa-x-twitter"></i></a>
+        <a href="https://x/hmpmanish" target="_blank"><i class="fab fa-x-twitter"></i></a>
         <a href="https://www.instagram.com/hmpmanish" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="https://www.youtube.com/c/hmpmanish" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.youtube.com/hmpmanish" target="_blank"><i class="fab fa-youtube"></i></a>
+        
+        <a href="https://www.facebook.com/hmpmanish" target="_blank"><i class="fab fa-facebook"></i></a>
         <a href="https://dev.to/hmpmanish" target="_blank"><i class="fab fa-dev"></i></a>
         <a href="https://www.hackerrank.com/hmpmanish" target="_blank"><i class="fab fa-hackerrank"></i></a>
-        <a href="https://leetcode.com/hmpmanish" target="_blank"><i class="fa-solid fa-code"></i></a>
-        <a href="https://codeforces.com/profile/hmpmanish" target="_blank"><i class="fa-solid fa-bolt"></i></a>
+        
       </div>
 
-      <!-- About Section -->
+      <!-- About -->
       <section class="about">
         <h2>About</h2>
         <p>I’m Manish Pandey — focused on building secure, user-friendly applications with modern tech stacks. Exploring ethical hacking, Firebase, and creative front-end projects.</p>
       </section>
 
-      <!-- Projects Section -->
+      <!-- Projects -->
       <section class="projects">
         <h2>Projects</h2>
         <ul>
@@ -62,7 +63,7 @@
         </ul>
       </section>
 
-      <!-- Contact Section -->
+      <!-- Contact -->
       <section class="contact">
         <h2>Contact</h2>
         <p><a href="mailto:hmpmanish@gmail.com">hmpmanish@gmail.com</a></p>
@@ -71,5 +72,16 @@
     </section>
   </main>
 
+  <!-- ScrollReveal Animation -->
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <script>
+    ScrollReveal({ reset: false, distance: '40px', duration: 800, delay: 200 });
+    ScrollReveal().reveal('.avatar-wrapper', { origin: 'top' });
+    ScrollReveal().reveal('h1, .subtext', { origin: 'bottom' });
+    ScrollReveal().reveal('.social-links', { origin: 'bottom', delay: 300 });
+    ScrollReveal().reveal('.about', { origin: 'left' });
+    ScrollReveal().reveal('.projects', { origin: 'right' });
+    ScrollReveal().reveal('.contact', { origin: 'bottom' });
+  </script>
 </body>
 </html>
