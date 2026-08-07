@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMPManish | Manish Pandey | Building Intelligent Software</title>
+    <meta name="description" content="Portfolio of Manish Pandey (HMPManish). Building intelligent software that transforms ideas into reality using AI, automation, cloud computing, and modern web technologies.">
+    <meta name="theme-color" content="#030712">
+    
+    <!-- Open Graph / SEO -->
+    <meta property="og:title" content="HMPManish - Technology Brand & Portfolio">
+    <meta property="og:description" content="Portfolio of Manish Pandey (HMPManish). Building intelligent software that transforms ideas into reality.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hmpmanish.github.io/info/">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="noscroll">
+
+    <!-- Audio Elements for UI Sounds (muted by default) -->
+    <audio id="sound-hover" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" preload="auto"></audio>
+    <audio id="sound-click" src="https://assets.mixkit.co/sfx/preview/mixkit-interface-click-1126.mp3" preload="auto"></audio>
+
+    <!-- Custom Particle Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Page Loader - Futuristic OS Boot Sequence -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-content">
+            <h1 class="glitch" data-text="HMPManish OS">HMPManish OS</h1>
+            <div class="loading-bar">
+                <div class="progress"></div>
+            </div>
+            <div class="loading-text">BOOTING AI CORE... <span id="loading-percent">0%</span></div>
+            <div class="loading-logs" id="loading-logs">
+                <p>> Initializing Particle Engine...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cinematic Background -->
+    <canvas id="bg-canvas"></canvas>
+    <div class="bg-mesh"></div>
+    <div class="bg-noise"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress-bar" id="scroll-progress"></div>
+
+    <!-- Header / Navbar -->
+    <header class="glass-header" id="header">
+        <div class="nav-container">
+            <a href="#" class="logo magnetic hover-sound">
+                <span class="logo-text">HMPManish™</span>
+            </a>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#home" class="nav-link active hover-sound">Home</a></li>
+                    <li><a href="#about" class="nav-link hover-sound">Story</a></li>
+                    <li><a href="#projects" class="nav-link hover-sound">Work</a></li>
+                    <li><a href="#resume" class="nav-link hover-sound">Resume</a></li>
+                    <li><a href="#github" class="nav-link hover-sound">Open Source</a></li>
+                    <li><a href="#contact" class="nav-link hover-sound">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="cmd-palette-btn magnetic hover-sound" aria-label="Command Palette">
+                    <i class="fas fa-search"></i> <span class="cmd-text">Ctrl+K</span>
+                </button>
+                <div class="hamburger magnetic hover-sound" id="hamburger">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <ul>
+            <li><a href="#home" class="mobile-link">Home</a></li>
+            <li><a href="#about" class="mobile-link">Story</a></li>
+            <li><a href="#projects" class="mobile-link">Work</a></li>
+            <li><a href="#resume" class="mobile-link">Resume</a></li>
+            <li><a href="#github" class="mobile-link">Open Source</a></li>
+            <li><a href="#contact" class="mobile-link">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Performance & Status Monitors -->
+    <div class="perf-monitor">
+        <div class="fps-counter" id="fps-counter"><i class="fas fa-microchip"></i> <span id="fps-val">60</span> FPS</div>
+        <div class="visitor-counter"><i class="fas fa-globe"></i> Global: <span id="v-count">1,402</span></div>
+    </div>
+
+    <!-- Floating Glass Dock -->
+    <div class="floating-dock">
+        <button class="dock-btn magnetic tooltip hover-sound" data-tip="Toggle Theme" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+        <button class="dock-btn magnetic tooltip hover-sound" data-tip="Accent Color" id="color-toggle">
+            <i class="fas fa-palette"></i>
+        </button>
+        <button class="dock-btn magnetic tooltip hover-sound" data-tip="UI Sounds" id="sound-toggle">
+            <i class="fas fa-volume-mute"></i>
+        </button>
+        <button class="dock-btn magnetic tooltip hover-sound" data-tip="AI Assistant" id="ai-toggle">
+            <i class="fas fa-robot"></i>
+        </button>
+    </div>
+
+    <main>
+        <!-- 1. HERO SECTION -->
+        <section id="home" class="hero-section section-padding">
+            <div class="container hero-grid">
+                <div class="hero-content reveal-left">
+                    <div class="greeting-badge magnetic hover-sound">
+                        <span class="pulse-dot"></span> Available for new opportunities
+                    </div>
+                    <h1 class="hero-title">
+                        Transforming Ideas Into <br>
+                        <span class="gradient-text type-wrap"><span id="typed-text"></span><span class="cursor">|</span></span>
+                    </h1>
+                    <p class="hero-description text-reveal">
+                        Hi, I'm <strong>Manish Pandey</strong>. I build globally impactful AI-powered software products and aim to establish <span class="text-primary">HMPManish</span> as a recognized technology brand.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#projects" class="btn btn-primary magnetic click-sound">
+                            <span>Explore Work</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#contact" class="btn btn-secondary magnetic click-sound">
+                            <span>Contact Me</span>
+                        </a>
+                    </div>
+                    <div class="hero-socials">
+                        <a href="https://github.com/hmpmanish" target="_blank" class="social-icon magnetic hover-sound"><i class="fab fa-github"></i></a>
+                        <a href="https://linkedin.com/in/hmpmanish" target="_blank" class="social-icon magnetic hover-sound"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://x.com/hmpmanish" target="_blank" class="social-icon magnetic hover-sound"><i class="fab fa-twitter"></i></a>
+                        <a href="mailto:hmpmanish.dev@gmail.com" class="social-icon magnetic hover-sound"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+                <div class="hero-visual reveal-right">
+                    <div class="profile-card-3d tilt-card">
+                        <div class="card-glow"></div>
+                        <div class="card-inner glass-panel">
+                            <div class="profile-image-container">
+                                <div class="rotating-rings">
+                                    <div class="ring ring-1"></div>
+                                    <div class="ring ring-2"></div>
+                                    <div class="ring ring-3"></div>
+                                </div>
+                                <img src="https://avatars.githubusercontent.com/u/108343753?v=4" alt="Manish Pandey" class="profile-img">
+                            </div>
+                            <div class="floating-badges">
+                                <div class="badge badge-1 glass-badge"><i class="fas fa-laptop-code"></i> Developer Tools</div>
+                                <div class="badge badge-2 glass-badge"><i class="fas fa-brain"></i> AI / SaaS</div>
+                            </div>
+                            <div class="stats-row">
+                                <div class="stat-item">
+                                    <h4 class="counter" data-target="12">0</h4>
+                                    <p>Projects</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h4 class="counter" data-target="35">0</h4>
+                                    <p>Repos</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h4 class="counter" data-target="500">0</h4>
+                                    <p>Commits</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="#about" class="scroll-indicator magnetic hover-sound">
+                <div class="mouse"><div class="wheel"></div></div>
+                <span class="arrows"><span></span><span></span><span></span></span>
+            </a>
+        </section>
+
+        <!-- 2. INFINITE LOGO MARQUEE -->
+        <div class="tech-marquee-wrapper reveal-up">
+            <div class="tech-marquee">
+                <div class="tech-track">
+                    <!-- Cloned in JS for infinite scroll -->
+                    <div class="tech-item"><i class="fab fa-js"></i> JavaScript</div>
+                    <div class="tech-item"><i class="fab fa-react"></i> React / Next.js</div>
+                    <div class="tech-item"><i class="fab fa-python"></i> Python</div>
+                    <div class="tech-item"><i class="fab fa-java"></i> Java</div>
+                    <div class="tech-item"><i class="fab fa-node-js"></i> Node.js</div>
+                    <div class="tech-item"><i class="fas fa-database"></i> MongoDB</div>
+                    <div class="tech-item"><i class="fab fa-aws"></i> Cloud / AI</div>
+                    <div class="tech-item"><i class="fas fa-code"></i> C / C++</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ABOUT & JOURNEY SECTION -->
+        <section id="about" class="about-section section-padding">
+            <div class="container">
+                <div class="section-heading text-center reveal-up">
+                    <h2 class="title">The <span class="gradient-text">Journey</span></h2>
+                    <p class="subtitle">Building a legacy in software engineering and AI.</p>
+                </div>
+                
+                <div class="about-grid">
+                    <div class="about-text glass-panel reveal-left tilt-card-subtle">
+                        <h3><i class="fas fa-fingerprint gradient-text"></i> Who am I?</h3>
+                        <p>I am Manish Pandey, a software engineer from Gonda, Uttar Pradesh, driven by the desire to build systems that scale. I love creating AI Applications, SaaS Products, Full Stack Platforms, and Developer Tools.</p>
+                        <p>I believe great software should be both powerful and beautifully designed. HMPManish is not just my username; it's the brand I am building to deliver world-class technology solutions.</p>
+                        
+                        <div class="highlight-boxes">
+                            <div class="h-box magnetic hover-sound">
+                                <i class="fas fa-rocket"></i>
+                                <span>Innovation</span>
+                            </div>
+                            <div class="h-box magnetic hover-sound">
+                                <i class="fas fa-paint-brush"></i>
+                                <span>UI/UX</span>
+                            </div>
+                            <div class="h-box magnetic hover-sound">
+                                <i class="fas fa-cogs"></i>
+                                <span>Automation</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-timeline glass-panel reveal-right">
+                        <h3><i class="fas fa-route gradient-text"></i> Path to Mastery</h3>
+                        <div class="timeline animated-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-dot pulse-dot-small"></div>
+                                <div class="timeline-content">
+                                    <span class="date">Present</span>
+                                    <h4>Building AI & SaaS</h4>
+                                    <p>Focusing on Artificial Intelligence, Cloud Computing, and System Design while building Bharat MSME AI Manager.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <span class="date">Ongoing</span>
+                                    <h4>B.Tech Computer Science</h4>
+                                    <p>Mastering core computer science concepts, C/C++, Java, and algorithms.</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <span class="date">The Beginning</span>
+                                    <h4>Hello World</h4>
+                                    <p>Started the journey with web technologies and open source contributions.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SKILLS SECTION -->
+        <section id="skills" class="skills-section section-padding">
+            <div class="container">
+                <div class="section-heading text-center reveal-up">
+                    <h2 class="title">Technical <span class="gradient-text">Arsenal</span></h2>
+                    <p class="subtitle">The tools and languages I use to forge digital experiences.</p>
+                </div>
+
+                <div class="skills-tabs reveal-up">
+                    <button class="tab-btn active magnetic hover-sound click-sound" data-tab="frontend">Frontend & UI</button>
+                    <button class="tab-btn magnetic hover-sound click-sound" data-tab="backend">Backend & Data</button>
+                    <button class="tab-btn magnetic hover-sound click-sound" data-tab="languages">Core Languages</button>
+                </div>
+
+                <div class="skills-content reveal-up">
+                    <!-- Frontend -->
+                    <div class="skill-pane active" id="frontend">
+                        <div class="skill-grid">
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #61DAFB;"><i class="fab fa-react"></i></div>
+                                <h4>React / Next.js</h4>
+                                <p>Building highly interactive SPA/SSR apps.</p>
+                            </div>
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #F7DF1E;"><i class="fab fa-js"></i></div>
+                                <h4>JavaScript / TS</h4>
+                                <p>The language of the modern web.</p>
+                            </div>
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #38BDF8;"><i class="fab fa-css3-alt"></i></div>
+                                <h4>CSS3 / Glassmorphism</h4>
+                                <p>Crafting Awwwards-level UI.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Backend -->
+                    <div class="skill-pane" id="backend">
+                        <div class="skill-grid">
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #339933;"><i class="fab fa-node-js"></i></div>
+                                <h4>Node.js / Express</h4>
+                                <p>Scalable server-side architecture.</p>
+                            </div>
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #47A248;"><i class="fas fa-leaf"></i></div>
+                                <h4>MongoDB</h4>
+                                <p>NoSQL database modeling & aggregation.</p>
+                            </div>
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #FF9900;"><i class="fas fa-server"></i></div>
+                                <h4>REST APIs</h4>
+                                <p>Building secure and fast endpoints.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Languages -->
+                    <div class="skill-pane" id="languages">
+                        <div class="skill-grid">
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #3776AB;"><i class="fab fa-python"></i></div>
+                                <h4>Python</h4>
+                                <p>For AI, Machine Learning, and scripts.</p>
+                            </div>
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #f89820;"><i class="fab fa-java"></i></div>
+                                <h4>Java</h4>
+                                <p>Object-Oriented Programming and enterprise patterns.</p>
+                            </div>
+                            <div class="skill-card glass-panel tilt-card">
+                                <div class="skill-icon" style="color: #00599C;"><i class="fas fa-code"></i></div>
+                                <h4>C / C++</h4>
+                                <p>Core CS, Data Structures, and Memory Management.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. PROJECTS SECTION -->
+        <section id="projects" class="projects-section section-padding">
+            <div class="container">
+                <div class="section-heading text-center reveal-up">
+                    <h2 class="title">Selected <span class="gradient-text">Works</span></h2>
+                    <p class="subtitle">Every project tells a story. Here are some of my best.</p>
+                </div>
+
+                <div class="project-filters reveal-up">
+                    <button class="filter-btn active hover-sound click-sound" data-filter="all">All Projects</button>
+                    <button class="filter-btn hover-sound click-sound" data-filter="saas">SaaS / Full Stack</button>
+                    <button class="filter-btn hover-sound click-sound" data-filter="ai">AI / ML</button>
+                    <button class="filter-btn hover-sound click-sound" data-filter="tools">Developer Tools</button>
+                </div>
+
+                <div class="project-grid reveal-up">
+                    <!-- Project 1: Bharat MSME -->
+                    <div class="project-card tilt-card glass-panel" data-category="saas">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80" alt="Bharat MSME AI Manager">
+                            <div class="project-overlay">
+                                <a href="#" class="project-link magnetic hover-sound tooltip" data-tip="View Details"><i class="fas fa-eye"></i></a>
+                                <a href="https://github.com/hmpmanish" target="_blank" class="project-link magnetic hover-sound tooltip" data-tip="Source Code"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <div class="project-header">
+                                <h3>Bharat MSME AI Manager</h3>
+                                <i class="fas fa-star text-primary"></i>
+                            </div>
+                            <p>AI-powered business management platform helping MSMEs improve productivity and decision making.</p>
+                            <div class="project-tags">
+                                <span>AI</span><span>Full Stack</span><span>SaaS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Sharda Connect -->
+                    <div class="project-card tilt-card glass-panel" data-category="saas">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80" alt="Sharda Connect">
+                            <div class="project-overlay">
+                                <a href="#" class="project-link magnetic hover-sound"><i class="fas fa-eye"></i></a>
+                                <a href="https://github.com/hmpmanish" target="_blank" class="project-link magnetic hover-sound"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Sharda Connect</h3>
+                            <p>Anonymous student communication platform with secure messaging and modern interface.</p>
+                            <div class="project-tags">
+                                <span>React</span><span>Node.js</span><span>WebSockets</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: Motion Tracking -->
+                    <div class="project-card tilt-card glass-panel" data-category="ai">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee57d5?auto=format&fit=crop&w=600&q=80" alt="Motion Tracking">
+                            <div class="project-overlay">
+                                <a href="#" class="project-link magnetic hover-sound"><i class="fas fa-eye"></i></a>
+                                <a href="https://github.com/hmpmanish" target="_blank" class="project-link magnetic hover-sound"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Motion Tracking System</h3>
+                            <p>OpenCV-based real-time motion detection and tracking application for advanced monitoring.</p>
+                            <div class="project-tags">
+                                <span>Python</span><span>OpenCV</span><span>AI/CV</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 4: Fake Login Detector -->
+                    <div class="project-card tilt-card glass-panel" data-category="tools">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80" alt="Fake Login Detector">
+                            <div class="project-overlay">
+                                <a href="#" class="project-link magnetic hover-sound"><i class="fas fa-eye"></i></a>
+                                <a href="https://github.com/hmpmanish" target="_blank" class="project-link magnetic hover-sound"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Fake Login Detector</h3>
+                            <p>Cybersecurity tool for detecting phishing and fake login pages using heuristic analysis.</p>
+                            <div class="project-tags">
+                                <span>Cyber Security</span><span>Python</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 5: Krishi Sewa -->
+                    <div class="project-card tilt-card glass-panel" data-category="saas">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=600&q=80" alt="Krishi Sewa">
+                            <div class="project-overlay">
+                                <a href="#" class="project-link magnetic hover-sound"><i class="fas fa-eye"></i></a>
+                                <a href="https://github.com/hmpmanish" target="_blank" class="project-link magnetic hover-sound"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Krishi Sewa</h3>
+                            <p>Farmer-first digital ecosystem connecting farmers with suppliers and agricultural services.</p>
+                            <div class="project-tags">
+                                <span>Full Stack</span><span>MongoDB</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 6: Data Structures -->
+                    <div class="project-card tilt-card glass-panel" data-category="tools">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80" alt="Data Structures in C">
+                            <div class="project-overlay">
+                                <a href="#" class="project-link magnetic hover-sound"><i class="fas fa-eye"></i></a>
+                                <a href="https://github.com/hmpmanish" target="_blank" class="project-link magnetic hover-sound"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3>Data Structures in C</h3>
+                            <p>Comprehensive implementation of core data structures and algorithms in C.</p>
+                            <div class="project-tags">
+                                <span>C</span><span>Algorithms</span><span>Core CS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4 reveal-up">
+                    <a href="https://github.com/hmpmanish" target="_blank" class="btn btn-outline magnetic click-sound">View All 12+ Projects on GitHub</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. GITHUB & OPEN SOURCE DASHBOARD -->
+        <section id="github" class="github-section section-padding">
+            <div class="container">
+                <div class="section-heading text-center reveal-up">
+                    <h2 class="title">Open <span class="gradient-text">Source</span></h2>
+                    <p class="subtitle">My contributions to the developer community.</p>
+                </div>
+                <div class="glass-panel github-dashboard reveal-up tilt-card-subtle">
+                    <div class="gh-header">
+                        <i class="fab fa-github gh-logo glow-icon"></i>
+                        <div class="gh-user-info">
+                            <h3>GitHub Activity</h3>
+                            <p><a href="https://github.com/hmpmanish" target="_blank" class="hover-sound">@hmpmanish</a></p>
+                        </div>
+                    </div>
+                    <div class="gh-stats">
+                        <div class="gh-stat-box magnetic">
+                            <span class="gh-stat-val counter" data-target="500">0</span>
+                            <span class="gh-stat-label">Contributions</span>
+                        </div>
+                        <div class="gh-stat-box magnetic">
+                            <span class="gh-stat-val counter" data-target="35">0</span>
+                            <span class="gh-stat-label">Repositories</span>
+                        </div>
+                        <div class="gh-stat-box magnetic">
+                            <span class="gh-stat-val counter" data-target="15">0</span>
+                            <span class="gh-stat-label">Stars</span>
+                        </div>
+                    </div>
+                    <!-- Fake Heatmap -->
+                    <h4 style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.9rem;">Contribution Graph (Simulated)</h4>
+                    <div class="gh-heatmap">
+                        <!-- Generated via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. RESUME & SERVICES -->
+        <section id="resume" class="resume-section section-padding">
+            <div class="container">
+                <div class="grid-2col">
+                    <!-- Services -->
+                    <div class="services-wrapper reveal-left">
+                        <h2 class="title" style="font-size: 2.5rem; margin-bottom: 2rem;">What I <span class="gradient-text">Deliver</span></h2>
+                        <div class="service-list">
+                            <div class="service-item glass-panel tilt-card-subtle magnetic hover-sound">
+                                <i class="fas fa-brain text-primary"></i>
+                                <div>
+                                    <h4>AI Integration</h4>
+                                    <p>Integrating LLMs, Computer Vision, and smart automation into web products.</p>
+                                </div>
+                            </div>
+                            <div class="service-item glass-panel tilt-card-subtle magnetic hover-sound">
+                                <i class="fas fa-laptop-code text-secondary"></i>
+                                <div>
+                                    <h4>Full Stack Web Dev</h4>
+                                    <p>End-to-end development of scalable SaaS architectures.</p>
+                                </div>
+                            </div>
+                            <div class="service-item glass-panel tilt-card-subtle magnetic hover-sound">
+                                <i class="fas fa-shield-alt text-accent"></i>
+                                <div>
+                                    <h4>Cybersecurity & Tools</h4>
+                                    <p>Building secure applications and efficient developer tools.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resume Download / View -->
+                    <div class="resume-wrapper glass-panel reveal-right tilt-card-subtle">
+                        <div class="resume-header">
+                            <i class="fas fa-file-alt text-primary" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3>Professional Resume</h3>
+                            <p>Download my full resume to view my detailed educational background, comprehensive skill set, and complete project history.</p>
+                        </div>
+                        <div class="resume-actions" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                            <a href="resume.html" target="_blank" class="btn btn-primary magnetic click-sound"><i class="fas fa-download"></i> View / Save PDF</a>
+                            <a href="resume.html" target="_blank" class="btn btn-outline magnetic click-sound"><i class="fas fa-external-link-alt"></i> View Online</a>
+                        </div>
+                        <div class="resume-preview mt-4">
+                            <!-- A stylistic mini representation of a document -->
+                            <div class="doc-lines">
+                                <div class="d-line w-100"></div>
+                                <div class="d-line w-75"></div>
+                                <div class="d-line w-50"></div>
+                                <br>
+                                <div class="d-line w-100"></div>
+                                <div class="d-line w-100"></div>
+                                <div class="d-line w-75"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. CONTACT SECTION -->
+        <section id="contact" class="contact-section section-padding">
+            <div class="container">
+                <div class="section-heading text-center reveal-up">
+                    <h2 class="title">Initiate <span class="gradient-text">Connection</span></h2>
+                    <p class="subtitle">Looking to start a project or need a Senior Engineer? Let's talk.</p>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-info reveal-left">
+                        <div class="contact-card glass-panel tilt-card-subtle">
+                            <i class="fas fa-envelope icon-glow"></i>
+                            <h4>Email</h4>
+                            <a href="mailto:hmpmanish.dev@gmail.com" class="hover-sound">hmpmanish.dev@gmail.com</a>
+                        </div>
+                        <div class="contact-card glass-panel tilt-card-subtle">
+                            <i class="fas fa-map-marker-alt icon-glow"></i>
+                            <h4>Location</h4>
+                            <p>Gonda, Uttar Pradesh, India</p>
+                        </div>
+                        <div class="contact-card glass-panel tilt-card-subtle">
+                            <i class="fas fa-share-alt icon-glow"></i>
+                            <h4>Socials</h4>
+                            <div class="social-links-small">
+                                <a href="https://github.com/hmpmanish" target="_blank" class="magnetic hover-sound"><i class="fab fa-github"></i></a>
+                                <a href="https://linkedin.com/in/hmpmanish" target="_blank" class="magnetic hover-sound"><i class="fab fa-linkedin"></i></a>
+                                <a href="https://x.com/hmpmanish" target="_blank" class="magnetic hover-sound"><i class="fab fa-twitter"></i></a>
+                                <a href="https://instagram.com/hmpmanish" target="_blank" class="magnetic hover-sound"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-wrapper glass-panel reveal-right">
+                        <form id="contact-form" class="contact-form">
+                            <div class="form-group">
+                                <input type="text" id="name" required placeholder=" ">
+                                <label for="name">Your Name</label>
+                                <div class="form-line"></div>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" id="email" required placeholder=" ">
+                                <label for="email">Your Email</label>
+                                <div class="form-line"></div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="subject" required placeholder=" ">
+                                <label for="subject">Subject</label>
+                                <div class="form-line"></div>
+                            </div>
+                            <div class="form-group">
+                                <textarea id="message" required placeholder=" " rows="4"></textarea>
+                                <label for="message">Your Message</label>
+                                <div class="form-line"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block magnetic click-sound">
+                                <span>Send Transmission</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-waves">
+            <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+                <path fill="var(--glass-bg)" fill-opacity="1" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </div>
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <h2>HMPManish™</h2>
+                <p>Building intelligent software that transforms ideas into reality.</p>
+            </div>
+            <div class="footer-links">
+                <h4>System Links</h4>
+                <a href="#home" class="hover-sound">Home</a>
+                <a href="#about" class="hover-sound">About</a>
+                <a href="#projects" class="hover-sound">Projects</a>
+                <a href="#resume" class="hover-sound">Resume</a>
+            </div>
+            <div class="footer-legal">
+                <p>&copy; 2026 Manish Pandey. All systems nominal.</p>
+                <div style="display:flex; align-items:center; gap: 1rem;">
+                    <a href="#" class="back-to-top magnetic tooltip hover-sound" data-tip="Back To Top" id="backToTop"><i class="fas fa-arrow-up"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- COMMAND PALETTE MODAL -->
+    <div class="cmd-palette-overlay" id="cmd-palette">
+        <div class="cmd-palette-modal">
+            <div class="cmd-header">
+                <i class="fas fa-search"></i>
+                <input type="text" id="cmd-input" placeholder="Type a command or search...">
+                <span class="esc-hint">ESC</span>
+            </div>
+            <div class="cmd-body">
+                <div class="cmd-group">
+                    <div class="cmd-group-title">Navigation</div>
+                    <a href="#home" class="cmd-item active hover-sound click-sound"><i class="fas fa-home"></i> Go to Home</a>
+                    <a href="#about" class="cmd-item hover-sound click-sound"><i class="fas fa-user"></i> Go to About</a>
+                    <a href="#projects" class="cmd-item hover-sound click-sound"><i class="fas fa-briefcase"></i> Go to Projects</a>
+                    <a href="#github" class="cmd-item hover-sound click-sound"><i class="fab fa-github"></i> Open Source</a>
+                    <a href="#contact" class="cmd-item hover-sound click-sound"><i class="fas fa-envelope"></i> Go to Contact</a>
+                </div>
+                <div class="cmd-group">
+                    <div class="cmd-group-title">System Actions</div>
+                    <div class="cmd-item hover-sound click-sound" id="cmd-theme"><i class="fas fa-moon"></i> Toggle Dark/Light Mode</div>
+                    <div class="cmd-item hover-sound click-sound" id="cmd-color"><i class="fas fa-palette"></i> Change Accent Color</div>
+                    <div class="cmd-item hover-sound click-sound" id="cmd-sound"><i class="fas fa-volume-up"></i> Toggle UI Sounds</div>
+                    <div class="cmd-item hover-sound click-sound" id="cmd-matrix"><i class="fas fa-code"></i> Toggle Matrix Rain</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- TERMINAL EASTER EGG -->
+    <div class="fake-terminal" id="fake-terminal">
+        <div class="term-header">
+            <div class="term-buttons">
+                <span class="term-close magnetic hover-sound"></span>
+                <span class="term-min magnetic hover-sound"></span>
+                <span class="term-max magnetic hover-sound"></span>
+            </div>
+            <div class="term-title">hmpmanish@os: ~</div>
+        </div>
+        <div class="term-body" id="term-body">
+            <p>Welcome to HMP OS v3.0 (Cyber Premium Edition).</p>
+            <p>Type 'help' to see available commands.</p>
+            <div class="term-line">
+                <span class="prompt">guest@hmpmanish:~$</span>
+                <input type="text" id="term-input" autocomplete="off">
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI ASSISTANT WIDGET -->
+    <div class="ai-widget" id="ai-widget">
+        <div class="ai-header">
+            <div><i class="fas fa-robot text-primary"></i> HMP AI Assistant</div>
+            <i class="fas fa-times ai-close hover-sound" id="ai-close"></i>
+        </div>
+        <div class="ai-body" id="ai-body">
+            <div class="ai-msg ai-sys">Hello! I am the intelligent assistant for Manish Pandey. I can tell you about his AI projects, Full Stack skills, or how to contact him. What would you like to know?</div>
+        </div>
+        <div class="ai-input-area">
+            <input type="text" id="ai-input" placeholder="Type a message...">
+            <button id="ai-send" class="hover-sound"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Image Lightbox (Hidden by default, used via JS if needed for Gallery) -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close hover-sound">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

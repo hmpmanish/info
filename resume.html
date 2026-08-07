@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manish Pandey - Resume</title>
+    <style>
+        /* ATS-Friendly & Print Optimized CSS */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        :root {
+            --text-color: #111827;
+            --heading-color: #000000;
+            --link-color: #2563EB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--text-color);
+            line-height: 1.4;
+            font-size: 11pt; /* Ideal for ATS */
+            background-color: #f3f4f6;
+            padding: 20px;
+        }
+
+        .resume-container {
+            max-width: 8.5in; /* Standard Letter/A4 width */
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 0.5in 0.5in; /* 0.5 inch margins */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24pt;
+            font-weight: 700;
+            color: var(--heading-color);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .contact-info {
+            text-align: center;
+            font-size: 10pt;
+            margin-bottom: 16px;
+        }
+
+        .contact-info a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 0 6px;
+        }
+
+        .contact-info a:hover {
+            color: var(--link-color);
+            text-decoration: underline;
+        }
+
+        .section-heading {
+            font-size: 12pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            padding-bottom: 2px;
+            color: var(--heading-color);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 2px;
+        }
+
+        .item-title {
+            font-weight: 700;
+            font-size: 11pt;
+        }
+
+        .item-subtitle {
+            font-style: italic;
+            font-size: 10.5pt;
+        }
+
+        .item-date {
+            font-size: 10pt;
+            white-space: nowrap;
+        }
+
+        ul {
+            padding-left: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        li {
+            margin-bottom: 3px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .skill-item strong {
+            display: inline-block;
+            width: 90px;
+        }
+
+        .project-item {
+            margin-bottom: 12px;
+        }
+
+        .print-btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background: #2563EB;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .print-btn:hover {
+            background: #1d4ed8;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .resume-container {
+                box-shadow: none;
+                max-width: 100%;
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            .print-btn {
+                display: none;
+            }
+            a {
+                color: #000;
+                text-decoration: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+    <div class="resume-container">
+        <!-- HEADER -->
+        <h1>Manish Pandey</h1>
+        <div class="contact-info">
+            <a href="https://github.com/hmpmanish" target="_blank">github.com/hmpmanish</a> |
+            <a href="https://hmpmanish.github.io/info/" target="_blank">hmpmanish.github.io/info</a> |
+            <a href="mailto:hmpmanish.dev@gmail.com">hmpmanish.dev@gmail.com</a>
+        </div>
+
+        <!-- SUMMARY -->
+        <p style="margin-bottom: 12px;">
+            B.Tech Computer Science & Engineering student with hands-on experience in full-stack web development, backend architecture, and AI/ML-oriented projects. Passionate about problem-solving, rapid learning, and building scalable software products and developer tools.
+        </p>
+
+        <!-- EDUCATION -->
+        <div class="section-heading">Education</div>
+        
+        <div class="item-header">
+            <span class="item-title">Sharda University</span>
+            <span class="item-date">2025 &ndash; 2029</span>
+        </div>
+        <div class="item-subtitle" style="margin-bottom: 8px;">B.Tech &ndash; Computer Science & Engineering</div>
+
+        <div class="item-header">
+            <span class="item-title">UP Board</span>
+            <span class="item-date">2025</span>
+        </div>
+        <div class="item-subtitle" style="margin-bottom: 4px;">Senior Secondary (Class 12)</div>
+
+        <!-- TECHNICAL SKILLS -->
+        <div class="section-heading">Technical Skills</div>
+        <div class="skills-grid">
+            <div class="skill-item"><strong>Languages:</strong> Python, Java, C, C++, JavaScript, TypeScript</div>
+            <div class="skill-item"><strong>Frontend:</strong> HTML, CSS, React.js, Next.js, Tailwind CSS</div>
+            <div class="skill-item"><strong>Backend:</strong> Node.js, Express.js, Flask, REST APIs</div>
+            <div class="skill-item"><strong>Databases:</strong> MongoDB, MongoDB Atlas, SQLite</div>
+            <div class="skill-item"><strong>Tools & Cloud:</strong> Git, GitHub, JWT, Socket.IO, Cloudinary, Vite, Render, Vercel</div>
+        </div>
+
+        <!-- PROJECTS -->
+        <div class="section-heading">Projects</div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <span class="item-title">Pandey Traders &ndash; Full-Stack Business Platform</span>
+            </div>
+            <div class="item-subtitle" style="margin-bottom: 4px;">Next.js, TypeScript, Node.js, Express, MongoDB, Tailwind CSS</div>
+            <ul>
+                <li>Developed a modern, responsive full-stack platform to streamline operations for an agriculture business.</li>
+                <li>Built REST APIs using Node.js and Express to handle data transactions and user authentication.</li>
+                <li>Integrated Cloudinary for efficient media asset management and prepared deployment pipelines for Render and Vercel.</li>
+            </ul>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <span class="item-title">Jaymani Krishi Sewa</span>
+            </div>
+            <div class="item-subtitle" style="margin-bottom: 4px;">Flask, SQLite, JWT Auth</div>
+            <ul>
+                <li>Designed a digital marketplace backend connecting regional farmers with local agricultural suppliers.</li>
+                <li>Implemented role-based access control and JWT authentication to secure endpoints.</li>
+                <li>Engineered an administrative dashboard, database migrations, and seed scripts to manage products efficiently.</li>
+            </ul>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <span class="item-title">Sharda Connect</span>
+            </div>
+            <div class="item-subtitle" style="margin-bottom: 4px;">MERN Stack, Socket.IO</div>
+            <ul>
+                <li>Built an anonymous communication platform for students to foster campus engagement.</li>
+                <li>Implemented real-time messaging functionality utilizing Socket.IO and WebSockets.</li>
+                <li>Developed an administrative moderation dashboard to manage platform safety and users.</li>
+            </ul>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <span class="item-title">Resume Analyzer</span>
+            </div>
+            <div class="item-subtitle" style="margin-bottom: 4px;">MERN Stack</div>
+            <ul>
+                <li>Developed a web application architecture for automated resume processing and candidate metric analysis.</li>
+                <li>Focused on building a scalable, practical tool aimed at improving resume quality and feedback loops.</li>
+            </ul>
+        </div>
+
+        <div class="project-item">
+            <div class="item-header">
+                <span class="item-title">Motion Tracking & Hand Detector</span>
+            </div>
+            <div class="item-subtitle" style="margin-bottom: 4px;">Python, OpenCV</div>
+            <ul>
+                <li>Created computer-vision applications capable of real-time hand detection and motion tracking.</li>
+                <li>Implemented algorithms for movement recognition and interaction using live camera inputs.</li>
+            </ul>
+        </div>
+
+        <!-- CORE STRENGTHS & ACHIEVEMENTS -->
+        <div class="section-heading">Core Strengths & Achievements</div>
+        <ul>
+            <li><strong>Strengths:</strong> Full-Stack Development, Problem Solving, Rapid Learning, Debugging, UI/UX Implementation, Team Collaboration.</li>
+            <li><strong>Achievements:</strong> Google Cloud Skills Boost completions, NPTEL learning, Active Open-Source Contributor.</li>
+        </ul>
+
+    </div>
+</body>
+</html>
