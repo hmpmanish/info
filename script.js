@@ -517,6 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Send to Google Sheets
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
+                mode: 'no-cors',
                 body: formData
             })
             .then(response => {
