@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             // Collect form data
-            const formData = new FormData();
+            const formData = new URLSearchParams();
             formData.append('name', document.getElementById('name').value);
             formData.append('email', document.getElementById('email').value);
             formData.append('subject', document.getElementById('subject').value);
@@ -518,7 +518,10 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
             })
             .then(response => {
                 // Play confetti on success
