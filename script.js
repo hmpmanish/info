@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 13. CONTACT FORM & CONFETTI (Google Sheets Integration) ---
     const contactForm = document.getElementById('contact-form');
     // TODO: Paste your Google Apps Script Web App URL here once you deploy it
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzP6pE2b1ObeqWD2ryN66Onoe20VbHs85xWkSAoThuGZqz7BIFYw3FZRO8kQSpjdVB/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGpMf340yJNDlHr5NyfCEGkHgeBt-LVffhwIF2gf7Nk-T0lGWZceh5AzWxLO6XMMQL/exec";
 
     if (contactForm) {
         contactForm.addEventListener('submit', (e) => {
