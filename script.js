@@ -539,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }, 250);
                 
-                showToast('Message transmitted successfully.', 'fas fa-check-circle');
+                showToast('Request sent. (Delivery confirmation unavailable in this mode)', 'fas fa-check-circle');
                 contactForm.reset();
             })
             .catch(error => {
