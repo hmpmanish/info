@@ -106,8 +106,8 @@ function sendAutoReply(name, email, phone, subject, message) {
     
     <!-- Header with Logo -->
     <div style="background-color: #070a13; padding: 35px 20px; text-align: center; border-radius: 12px 12px 0 0;">
-      <!-- PUT YOUR HOSTED LOGO URL HERE in the src attribute -->
-      <img src="https://via.placeholder.com/400x200/070a13/4f46e5?text=HMP+Manish+Logo+Here" alt="${CONFIG.WEBSITE_NAME} Logo" style="max-height: 80px; width: auto; margin-bottom: 15px;">
+      <!-- Hosted Logo from GitHub -->
+      <img src="https://raw.githubusercontent.com/hmpmanish/info/main/WhatsApp%20Image%202026-09-14%20at%206.15.11%20PM.jpeg" alt="${CONFIG.WEBSITE_NAME} Logo" style="max-height: 80px; width: auto; margin-bottom: 15px;">
       <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; display: none;">${CONFIG.WEBSITE_NAME}</h1>
     </div>
     
@@ -150,10 +150,10 @@ function sendAutoReply(name, email, phone, subject, message) {
         <a href="https://twitter.com/your-handle" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/733/733590.png" alt="Twitter" style="width: 24px; height: 24px;">
         </a>
-        <a href="https://instagram.com/your-handle" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://instagram.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="width: 24px; height: 24px;">
         </a>
-        <a href="https://youtube.com/c/your-channel" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://youtube.com/c/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" style="width: 24px; height: 24px;">
         </a>
       </div>
