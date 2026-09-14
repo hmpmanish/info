@@ -933,8 +933,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 analyticsData.append('action', 'track');
                 analyticsData.append('ip', data.ip || 'Unknown');
                 analyticsData.append('city', data.city || 'Unknown');
+                analyticsData.append('region', data.region || 'Unknown');
                 analyticsData.append('country', data.country_name || 'Unknown');
-                analyticsData.append('device', navigator.userAgent);
+                analyticsData.append('isp', data.org || 'Unknown');
+                analyticsData.append('latlong', (data.latitude && data.longitude) ? `${data.latitude}, ${data.longitude}` : 'Unknown');
+                
+                // OS detection
+                let os = 'Unknown OS';
+                const ua = navigator.userAgent;
+                if (ua.indexOf('Win') !== -1) os = 'Windows';
+                if (ua.indexOf('Mac') !== -1) os = 'MacOS';
+                if (ua.indexOf('Linux') !== -1) os = 'Linux';
+                if (ua.indexOf('Android') !== -1) os = 'Android';
+                if (ua.indexOf('like Mac') !== -1) os = 'iOS';
+                analyticsData.append('os', os);
+                
+                // Browser detection
+                let browser = 'Unknown Browser';
+                if (ua.indexOf('Chrome') !== -1 && ua.indexOf('Edg') === -1) browser = 'Chrome';
+                else if (ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1) browser = 'Safari';
+                else if (ua.indexOf('Firefox') !== -1) browser = 'Firefox';
+                else if (ua.indexOf('Edg') !== -1) browser = 'Edge';
+                analyticsData.append('browser', browser);
+                
+                analyticsData.append('screen', `${window.screen.width}x${window.screen.height}`);
+                analyticsData.append('referrer', document.referrer || 'Direct');
+                analyticsData.append('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown');
+                analyticsData.append('language', navigator.language || 'Unknown');
 
                 fetch(WEB_APP_URL, {
                     method: 'POST',
