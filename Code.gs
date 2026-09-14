@@ -26,6 +26,22 @@ function doPost(e) {
       return createJsonResponse(false, "Invalid request. No data received.");
     }
     
+    // 0. Secret Visitor Analytics Tracking
+    if (e.parameter.action === 'track') {
+      const ip = e.parameter.ip || "Unknown";
+      const city = e.parameter.city || "Unknown";
+      const country = e.parameter.country || "Unknown";
+      const device = e.parameter.device || "Unknown";
+      
+      const analyticsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Analytics");
+      if (analyticsSheet) {
+        analyticsSheet.appendRow([new Date(), ip, city, country, device]);
+        return createJsonResponse(true, "Visit logged silently.");
+      } else {
+        return createJsonResponse(false, "Analytics tab not found.");
+      }
+    }
+    
     // Extract form fields with fallbacks for optional parameters
     const name = e.parameter.name || "";
     const email = e.parameter.email || "";
