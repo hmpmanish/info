@@ -833,7 +833,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // CONTACT FORM GOOGLE APPS SCRIPT INTEGRATION
     // =========================================================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGWiI1eFNtEuF4cRzaW3fZT2SteIBMGvEV1Cvoyrur_aJa0QtZIVPTKtAaucy8SkYY/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby9Deh0_wCQlC4MhC8r91uE0XHxqp9Vbec7kJYWoiebl8efZVYw3ky7pPAdrmhmHVE0/exec";
     
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submitBtn');
