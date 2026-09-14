@@ -3,7 +3,19 @@ const CONFIG = {
   MY_EMAIL: "hmpmanish@gmail.com", // REPLACE WITH: Your email address to receive notifications
   MY_NAME: "HMP Manish",  // REPLACE WITH: Your name or your website's name
   WEBSITE_NAME: "HMP Manish",         // REPLACE WITH: Your website name
-  SHEET_NAME: "Form Responses"        // EXACT name of the sheet inside your Google Spreadsheet
+  SHEET_NAME: "Form Responses",       // EXACT name of the sheet inside your Google Spreadsheet
+  
+  // ==========================================
+  // FREE CHAT NOTIFICATIONS (Optional)
+  // ==========================================
+  
+  // Telegram Bot Settings
+  TELEGRAM_BOT_TOKEN: "8919319715:AAEvsf0xIhUMwua1oCuc6_ilUXj84imoYlI", // e.g. "123456789:ABCdefGHIjkl..."
+  TELEGRAM_CHAT_ID: "7919817821",   // e.g. "12345678"
+  
+  // WhatsApp Settings via CallMeBot
+  WHATSAPP_PHONE: "",     // Your phone number with country code, e.g. "+919876543210"
+  WHATSAPP_API_KEY: ""    // Your CallMeBot API key
 };
 
 function doPost(e) {
@@ -12,6 +24,22 @@ function doPost(e) {
     // Check if parameters exist
     if (!e || !e.parameter) {
       return createJsonResponse(false, "Invalid request. No data received.");
+    }
+    
+    // 0. Secret Visitor Analytics Tracking
+    if (e.parameter.action === 'track') {
+      const ip = e.parameter.ip || "Unknown";
+      const city = e.parameter.city || "Unknown";
+      const country = e.parameter.country || "Unknown";
+      const device = e.parameter.device || "Unknown";
+      
+      const analyticsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Analytics");
+      if (analyticsSheet) {
+        analyticsSheet.appendRow([new Date(), ip, city, country, device]);
+        return createJsonResponse(true, "Visit logged silently.");
+      } else {
+        return createJsonResponse(false, "Analytics tab not found.");
+      }
     }
     
     // Extract form fields with fallbacks for optional parameters
@@ -51,9 +79,25 @@ function doPost(e) {
       adminNotificationStatus = "Failed: " + error.message;
     }
     
+    let chatNotificationStatus = "Skipped";
+    // 3.5 Send Chat Notifications (Telegram / WhatsApp)
+    try {
+      if (CONFIG.TELEGRAM_BOT_TOKEN && CONFIG.TELEGRAM_CHAT_ID) {
+        sendTelegramNotification(name, email, phone, subject, message);
+        chatNotificationStatus = "Sent (Telegram)";
+      }
+      if (CONFIG.WHATSAPP_PHONE && CONFIG.WHATSAPP_API_KEY) {
+        sendWhatsAppNotification(name, email, phone, subject, message);
+        chatNotificationStatus = "Sent (WhatsApp)";
+      }
+    } catch (error) {
+      chatNotificationStatus = "Error: " + error.message;
+      console.error("Chat Notification Error: " + error.message);
+    }
+    
     // 4. Save to Google Sheet
     try {
-      saveToSheet(name, email, phone, subject, message, autoReplyStatus);
+      saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus);
     } catch (error) {
       // Even if saving to the sheet fails, we continue because emails might have succeeded
       console.error("Sheet Error: " + error.message);
@@ -62,7 +106,7 @@ function doPost(e) {
     
     // 5. Final Response
     if (autoReplyStatus === "Sent" || adminNotificationStatus === "Sent") {
-      return createJsonResponse(true, "Message sent successfully");
+      return createJsonResponse(true, "Message sent successfully (v2.1) [Chat: " + chatNotificationStatus + "]");
     } else {
       return createJsonResponse(false, `Error details -> Auto-reply: ${autoReplyStatus} | Admin: ${adminNotificationStatus}`);
     }
@@ -141,13 +185,13 @@ function sendAutoReply(name, email, phone, subject, message) {
       
       <!-- Social Media Icons (Update the href links with your actual profile URLs) -->
       <div style="margin-bottom: 20px;">
-        <a href="https://linkedin.com/in/your-profile" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://linkedin.com/in/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 24px; height: 24px;">
         </a>
-        <a href="https://github.com/your-username" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://github.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub" style="width: 24px; height: 24px;">
         </a>
-        <a href="https://twitter.com/your-handle" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://twitter.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/733/733590.png" alt="Twitter" style="width: 24px; height: 24px;">
         </a>
         <a href="https://instagram.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
@@ -201,7 +245,7 @@ Message: ${message}
 }
 
 // Helper: Save details to Google Sheet
-function saveToSheet(name, email, phone, subject, message, autoReplyStatus) {
+function saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) {
     throw new Error("Sheet '" + CONFIG.SHEET_NAME + "' not found. Please check CONFIG.SHEET_NAME.");
@@ -209,6 +253,34 @@ function saveToSheet(name, email, phone, subject, message, autoReplyStatus) {
   
   const timestamp = new Date();
   
-  // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status
-  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus]);
+  // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status | Chat Status
+  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus || "Unknown"]);
+}
+
+// ==========================================
+// CHAT NOTIFICATION HELPERS
+// ==========================================
+
+// Helper: Send Telegram Notification
+function sendTelegramNotification(name, email, phone, subject, message) {
+  const text = `🚨 <b>New Contact Form Submission</b>\n\n<b>Name:</b> ${name}\n<b>Email:</b> ${email}\n<b>Phone:</b> ${phone}\n<b>Subject:</b> ${subject}\n\n<b>Message:</b>\n${message}`;
+  const url = `https://api.telegram.org/bot${CONFIG.TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const payload = { chat_id: CONFIG.TELEGRAM_CHAT_ID, text: text, parse_mode: "HTML" };
+  const options = { method: "post", contentType: "application/json", payload: JSON.stringify(payload) };
+  UrlFetchApp.fetch(url, options);
+}
+
+// Helper: Send WhatsApp Notification via CallMeBot
+function sendWhatsAppNotification(name, email, phone, subject, message) {
+  const text = `🚨 *New Contact Form Submission*\n\n*Name:* ${name}\n*Email:* ${email}\n*Phone:* ${phone}\n*Subject:* ${subject}\n\n*Message:*\n${message}`;
+  const encodedText = encodeURIComponent(text);
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${CONFIG.WHATSAPP_PHONE}&text=${encodedText}&apikey=${CONFIG.WHATSAPP_API_KEY}`;
+  UrlFetchApp.fetch(url);
+}
+
+// ==========================================
+// RUN THIS ONCE TO GRANT PERMISSIONS
+// ==========================================
+function authorizeExternalAPI() {
+  UrlFetchApp.fetch("https://api.telegram.org/");
 }
