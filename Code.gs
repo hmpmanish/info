@@ -35,13 +35,17 @@ function doPost(e) {
       const device = e.parameter.device || "Unknown";
       
       const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-      const analyticsSheet = spreadsheet.getSheetByName("Analytics");
-      if (analyticsSheet) {
-        analyticsSheet.appendRow([new Date(), ip, city, country, device]);
-        return createJsonResponse(true, "Visit logged silently.");
-      } else {
-        return createJsonResponse(false, "Analytics tab not found.");
+      let analyticsSheet = spreadsheet.getSheetByName("Analytics");
+      
+      // Auto-create Analytics sheet with headers if it doesn't exist
+      if (!analyticsSheet) {
+        analyticsSheet = spreadsheet.insertSheet("Analytics");
+        analyticsSheet.appendRow(["Timestamp", "IP", "City", "Country", "Device"]);
+        analyticsSheet.getRange(1, 1, 1, 5).setFontWeight("bold");
       }
+      
+      analyticsSheet.appendRow([new Date(), ip, city, country, device]);
+      return createJsonResponse(true, "Visit logged silently.");
     }
     
     // Extract form fields with fallbacks for optional parameters
@@ -249,9 +253,13 @@ Message: ${message}
 // Helper: Save details to Google Sheet
 function saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus) {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-  const sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
+  let sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
+  
+  // Auto-create sheet with headers if it doesn't exist
   if (!sheet) {
-    throw new Error("Sheet '" + CONFIG.SHEET_NAME + "' not found. Please check CONFIG.SHEET_NAME.");
+    sheet = spreadsheet.insertSheet(CONFIG.SHEET_NAME);
+    sheet.appendRow(["Timestamp", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply Status", "Chat Status"]);
+    sheet.getRange(1, 1, 1, 8).setFontWeight("bold");
   }
   
   const timestamp = new Date();
