@@ -29,19 +29,32 @@ function doPost(e) {
     
     // 0. Secret Visitor Analytics Tracking
     if (e.parameter.action === 'track') {
-      const ip = e.parameter.ip || "Unknown";
-      const city = e.parameter.city || "Unknown";
-      const country = e.parameter.country || "Unknown";
-      const device = e.parameter.device || "Unknown";
+      const eventType = "Page Visit";
+      const ip = e.parameter.ip || "";
+      const city = e.parameter.city || "";
+      const region = e.parameter.region || "";
+      const country = e.parameter.country || "";
+      const isp = e.parameter.isp || "";
+      const latlong = e.parameter.latlong || "";
+      const os = e.parameter.os || "";
+      const browser = e.parameter.browser || "";
+      const screen = e.parameter.screen || "";
+      const referrer = e.parameter.referrer || "";
+      const timezone = e.parameter.timezone || "";
+      const language = e.parameter.language || "";
       
       const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-      const analyticsSheet = spreadsheet.getSheetByName("Analytics");
-      if (analyticsSheet) {
-        analyticsSheet.appendRow([new Date(), ip, city, country, device]);
-        return createJsonResponse(true, "Visit logged silently.");
-      } else {
-        return createJsonResponse(false, "Analytics tab not found.");
+      let sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
+      
+      // Auto-create sheet with ALL 21 headers if it doesn't exist
+      if (!sheet) {
+        sheet = spreadsheet.insertSheet(CONFIG.SHEET_NAME);
+        sheet.appendRow(["Timestamp", "Event Type", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply", "Chat Status", "IP Address", "City", "State/Region", "Country", "ISP", "Lat/Long", "OS", "Browser", "Screen", "Referrer", "Timezone", "Language"]);
+        sheet.getRange(1, 1, 1, 21).setFontWeight("bold");
       }
+      
+      sheet.appendRow([new Date(), eventType, "", "", "", "", "", "", "", ip, city, region, country, isp, latlong, os, browser, screen, referrer, timezone, language]);
+      return createJsonResponse(true, "Visit logged silently in main sheet.");
     }
     
     // Extract form fields with fallbacks for optional parameters
@@ -249,15 +262,19 @@ Message: ${message}
 // Helper: Save details to Google Sheet
 function saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus) {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-  const sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
+  let sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
+  
+  // Auto-create sheet with 21 headers if it doesn't exist
   if (!sheet) {
-    throw new Error("Sheet '" + CONFIG.SHEET_NAME + "' not found. Please check CONFIG.SHEET_NAME.");
+    sheet = spreadsheet.insertSheet(CONFIG.SHEET_NAME);
+    sheet.appendRow(["Timestamp", "Event Type", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply", "Chat Status", "IP Address", "City", "State/Region", "Country", "ISP", "Lat/Long", "OS", "Browser", "Screen", "Referrer", "Timezone", "Language"]);
+    sheet.getRange(1, 1, 1, 21).setFontWeight("bold");
   }
   
   const timestamp = new Date();
   
-  // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status | Chat Status
-  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus || "Unknown"]);
+  // Columns matching requirement (21 columns)
+  sheet.appendRow([timestamp, "Form Submit", name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus || "Unknown", "", "", "", "", "", "", "", "", "", "", "", ""]);
 }
 
 // ==========================================
