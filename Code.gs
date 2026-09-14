@@ -3,6 +3,7 @@ const CONFIG = {
   MY_EMAIL: "hmpmanish@gmail.com", // REPLACE WITH: Your email address to receive notifications
   MY_NAME: "HMP Manish",  // REPLACE WITH: Your name or your website's name
   WEBSITE_NAME: "HMP Manish",         // REPLACE WITH: Your website name
+  SPREADSHEET_ID: "1Nsos-UUnvDoGIXYtEg-avPmWMAp7xW9svKgIHS9UxB4", // Master Google Sheet ID
   SHEET_NAME: "Form Responses",       // EXACT name of the sheet inside your Google Spreadsheet
   
   // ==========================================
@@ -33,7 +34,8 @@ function doPost(e) {
       const country = e.parameter.country || "Unknown";
       const device = e.parameter.device || "Unknown";
       
-      const analyticsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Analytics");
+      const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+      const analyticsSheet = spreadsheet.getSheetByName("Analytics");
       if (analyticsSheet) {
         analyticsSheet.appendRow([new Date(), ip, city, country, device]);
         return createJsonResponse(true, "Visit logged silently.");
@@ -246,7 +248,8 @@ Message: ${message}
 
 // Helper: Save details to Google Sheet
 function saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) {
     throw new Error("Sheet '" + CONFIG.SHEET_NAME + "' not found. Please check CONFIG.SHEET_NAME.");
   }
