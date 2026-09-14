@@ -35,17 +35,17 @@ function doPost(e) {
       const device = e.parameter.device || "Unknown";
       
       const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-      let analyticsSheet = spreadsheet.getSheetByName("Analytics");
+      let sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
       
-      // Auto-create Analytics sheet with headers if it doesn't exist
-      if (!analyticsSheet) {
-        analyticsSheet = spreadsheet.insertSheet("Analytics");
-        analyticsSheet.appendRow(["Timestamp", "IP", "City", "Country", "Device"]);
-        analyticsSheet.getRange(1, 1, 1, 5).setFontWeight("bold");
+      // Auto-create sheet with ALL headers if it doesn't exist
+      if (!sheet) {
+        sheet = spreadsheet.insertSheet(CONFIG.SHEET_NAME);
+        sheet.appendRow(["Timestamp", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply Status", "Chat Status", "IP", "City", "Country", "Device"]);
+        sheet.getRange(1, 1, 1, 12).setFontWeight("bold");
       }
       
-      analyticsSheet.appendRow([new Date(), ip, city, country, device]);
-      return createJsonResponse(true, "Visit logged silently.");
+      sheet.appendRow([new Date(), "", "", "", "", "", "", "", ip, city, country, device]);
+      return createJsonResponse(true, "Visit logged silently in main sheet.");
     }
     
     // Extract form fields with fallbacks for optional parameters
@@ -258,14 +258,14 @@ function saveToSheet(name, email, phone, subject, message, autoReplyStatus, chat
   // Auto-create sheet with headers if it doesn't exist
   if (!sheet) {
     sheet = spreadsheet.insertSheet(CONFIG.SHEET_NAME);
-    sheet.appendRow(["Timestamp", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply Status", "Chat Status"]);
-    sheet.getRange(1, 1, 1, 8).setFontWeight("bold");
+    sheet.appendRow(["Timestamp", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply Status", "Chat Status", "IP", "City", "Country", "Device"]);
+    sheet.getRange(1, 1, 1, 12).setFontWeight("bold");
   }
   
   const timestamp = new Date();
   
-  // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status | Chat Status
-  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus || "Unknown"]);
+  // Columns matching requirement
+  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus || "Unknown", "", "", "", ""]);
 }
 
 // ==========================================
