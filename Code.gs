@@ -243,9 +243,9 @@ function saveToSheet(name, email, phone, subject, message, autoReplyStatus) {
 
 // Helper: Send Telegram Notification
 function sendTelegramNotification(name, email, phone, subject, message) {
-  const text = `🚨 *New Contact Form Submission*\n\n*Name:* ${name}\n*Email:* ${email}\n*Phone:* ${phone}\n*Subject:* ${subject}\n\n*Message:*\n${message}`;
+  const text = `🚨 <b>New Contact Form Submission</b>\n\n<b>Name:</b> ${name}\n<b>Email:</b> ${email}\n<b>Phone:</b> ${phone}\n<b>Subject:</b> ${subject}\n\n<b>Message:</b>\n${message}`;
   const url = `https://api.telegram.org/bot${CONFIG.TELEGRAM_BOT_TOKEN}/sendMessage`;
-  const payload = { chat_id: CONFIG.TELEGRAM_CHAT_ID, text: text, parse_mode: "Markdown" };
+  const payload = { chat_id: CONFIG.TELEGRAM_CHAT_ID, text: text, parse_mode: "HTML" };
   const options = { method: "post", contentType: "application/json", payload: JSON.stringify(payload) };
   UrlFetchApp.fetch(url, options);
 }
