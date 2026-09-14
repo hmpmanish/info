@@ -10,8 +10,8 @@ const CONFIG = {
   // ==========================================
   
   // Telegram Bot Settings
-  TELEGRAM_BOT_TOKEN: "", // e.g. "123456789:ABCdefGHIjkl..."
-  TELEGRAM_CHAT_ID: "",   // e.g. "12345678"
+  TELEGRAM_BOT_TOKEN: "8919319715:AAEvsf0xIhUMwua1oCuc6_ilUXj84imoYlI", // e.g. "123456789:ABCdefGHIjkl..."
+  TELEGRAM_CHAT_ID: "7919817821",   // e.g. "12345678"
   
   // WhatsApp Settings via CallMeBot
   WHATSAPP_PHONE: "",     // Your phone number with country code, e.g. "+919876543210"
