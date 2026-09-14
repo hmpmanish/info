@@ -257,3 +257,10 @@ function sendWhatsAppNotification(name, email, phone, subject, message) {
   const url = `https://api.callmebot.com/whatsapp.php?phone=${CONFIG.WHATSAPP_PHONE}&text=${encodedText}&apikey=${CONFIG.WHATSAPP_API_KEY}`;
   UrlFetchApp.fetch(url);
 }
+
+// ==========================================
+// RUN THIS ONCE TO GRANT PERMISSIONS
+// ==========================================
+function authorizeExternalAPI() {
+  UrlFetchApp.fetch("https://api.telegram.org/");
+}
