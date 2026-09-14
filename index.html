@@ -23,7 +23,7 @@
     
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="noscroll">
+<body>
 
     <!-- Audio Elements for UI Sounds (muted by default) -->
     <audio id="sound-hover" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-technology-select-3124.mp3" preload="auto"></audio>
@@ -32,20 +32,6 @@
     <!-- Custom Particle Cursor -->
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
-
-    <!-- Page Loader - Futuristic OS Boot Sequence -->
-    <div class="loader-wrapper" id="loader">
-        <div class="loader-content">
-            <h1 class="glitch" data-text="HMPManish OS">HMPManish OS</h1>
-            <div class="loading-bar">
-                <div class="progress"></div>
-            </div>
-            <div class="loading-text">BOOTING AI CORE... <span id="loading-percent">0%</span></div>
-            <div class="loading-logs" id="loading-logs">
-                <p>> Initializing Particle Engine...</p>
-            </div>
-        </div>
-    </div>
 
     <!-- Cinematic Background -->
     <canvas id="bg-canvas"></canvas>
@@ -617,6 +603,11 @@
                             <div class="form-group">
                                 <input type="email" id="email" name="email" required placeholder=" ">
                                 <label for="email">Your Email</label>
+                                <div class="form-line"></div>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" id="phone" name="phone" placeholder=" ">
+                                <label for="phone">Phone Number (Optional)</label>
                                 <div class="form-line"></div>
                             </div>
                             <div class="form-group">
