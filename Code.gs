@@ -165,13 +165,13 @@ function sendAutoReply(name, email, phone, subject, message) {
       
       <!-- Social Media Icons (Update the href links with your actual profile URLs) -->
       <div style="margin-bottom: 20px;">
-        <a href="https://linkedin.com/in/your-profile" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://linkedin.com/in/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 24px; height: 24px;">
         </a>
-        <a href="https://github.com/your-username" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://github.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub" style="width: 24px; height: 24px;">
         </a>
-        <a href="https://twitter.com/your-handle" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+        <a href="https://twitter.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
           <img src="https://cdn-icons-png.flaticon.com/512/733/733590.png" alt="Twitter" style="width: 24px; height: 24px;">
         </a>
         <a href="https://instagram.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
