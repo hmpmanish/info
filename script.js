@@ -691,4 +691,73 @@ document.addEventListener('DOMContentLoaded', () => {
     // Duplicate tech marquee items
     const track = document.querySelector('.tech-track');
     if (track) track.innerHTML += track.innerHTML;
+
+    // =========================================================================
+    // CONTACT FORM GOOGLE APPS SCRIPT INTEGRATION
+    // =========================================================================
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGWiI1eFNtEuF4cRzaW3fZT2SteIBMGvEV1Cvoyrur_aJa0QtZIVPTKtAaucy8SkYY/exec";
+    
+    const contactForm = document.getElementById('contact-form');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitBtnText = document.getElementById('submitBtnText');
+    const statusMessage = document.getElementById('statusMessage');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value.trim();
+            const message = document.getElementById('message').value.trim();
+
+            if (!name || !email || !message) {
+                showStatusMessage('error', 'Please fill in all required fields.');
+                return;
+            }
+
+            const formData = new FormData(contactForm);
+            const urlEncodedData = new URLSearchParams(formData);
+
+            submitBtn.disabled = true;
+            submitBtnText.textContent = "Sending...";
+            statusMessage.style.display = 'none';
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: urlEncodedData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatusMessage('success', result.message || 'Message sent successfully!');
+                    contactForm.reset();
+                } else {
+                    showStatusMessage('error', result.message || 'Something went wrong.');
+                }
+            } catch (error) {
+                showStatusMessage('error', 'Network error. Please try again later.');
+                console.error('Submission Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtnText.textContent = "Send Transmission";
+            }
+        });
+    }
+
+    function showStatusMessage(type, text) {
+        statusMessage.textContent = text;
+        statusMessage.style.display = 'block';
+        if(type === 'success') {
+            statusMessage.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+            statusMessage.style.color = '#10b981';
+            statusMessage.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+        } else {
+            statusMessage.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            statusMessage.style.color = '#ef4444';
+            statusMessage.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+        }
+    }
 });
