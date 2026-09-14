@@ -1,95 +1,214 @@
+// Configuration variables
+const CONFIG = {
+  MY_EMAIL: "hmpmanish@gmail.com", // REPLACE WITH: Your email address to receive notifications
+  MY_NAME: "HMP Manish",  // REPLACE WITH: Your name or your website's name
+  WEBSITE_NAME: "HMP Manish",         // REPLACE WITH: Your website name
+  SHEET_NAME: "Form Responses"        // EXACT name of the sheet inside your Google Spreadsheet
+};
+
 function doPost(e) {
+  // Return standard JSON responses (CORS is inherently handled by Apps Script for Web Apps)
   try {
-    console.log("1. doPost execution started.");
-    
-    // 1. Get the active sheet
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // 2. Extract parameters from the incoming POST request
-    var name = e.parameter.name || "Unknown";
-    var email = (e.parameter.email || "").trim();
-    var subject = e.parameter.subject || "No Subject";
-    var message = e.parameter.message || "No Message";
-    var timestamp = new Date();
-    
-    console.log("Received Email: " + email);
-    
-    // Basic server-side validation to prevent empty spam
-    if (!name || !email || !message) {
-      console.log("Error: Missing required fields.");
-      return ContentService.createTextOutput(JSON.stringify({"result": "error", "message": "Missing required fields."}))
-        .setMimeType(ContentService.MimeType.JSON);
+    // Check if parameters exist
+    if (!e || !e.parameter) {
+      return createJsonResponse(false, "Invalid request. No data received.");
     }
     
-    // 3. Append to Google Sheets
+    // Extract form fields with fallbacks for optional parameters
+    const name = e.parameter.name || "";
+    const email = e.parameter.email || "";
+    const phone = e.parameter.phone || "Not provided";
+    const subject = e.parameter.subject || "No subject";
+    const message = e.parameter.message || "";
+    
+    // 1. Validation
+    if (name.trim() === "") {
+      return createJsonResponse(false, "Name is required.");
+    }
+    if (!isValidEmail(email)) {
+      return createJsonResponse(false, "Valid email is required.");
+    }
+    if (message.trim() === "") {
+      return createJsonResponse(false, "Message is required.");
+    }
+    
+    let autoReplyStatus = "Pending";
+    let adminNotificationStatus = "Pending";
+    
+    // 2. Send Auto-Reply to Visitor
     try {
-      sheet.appendRow([timestamp, name, email, subject, message]);
-      console.log("2. Sheet append successful.");
-    } catch (sheetError) {
-      console.error("Sheet append failed: " + sheetError);
+      sendAutoReply(name, email, phone, subject, message);
+      autoReplyStatus = "Sent";
+    } catch (error) {
+      autoReplyStatus = "Failed: " + error.message;
     }
     
-    // Validate Email using simple Regex
-    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    var isEmailValid = emailRegex.test(email);
+    // 3. Send Notification to Admin (You)
+    try {
+      sendAdminNotification(name, email, phone, subject, message);
+      adminNotificationStatus = "Sent";
+    } catch (error) {
+      adminNotificationStatus = "Failed: " + error.message;
+    }
     
-    // 4. Send Auto-Reply to Visitor
-    if (isEmailValid) {
-      try {
-        var visitorSubject = "Thanks for contacting Manish Pandey — HMPManish";
-        var visitorBody = "Hi " + name + ",\n\n" +
-                          "Thanks for contacting me through my portfolio.\n\n" +
-                          "I received your message successfully and will get back to you as soon as possible.\n\n" +
-                          "Your message:\n\n" + message + "\n\n" +
-                          "Best regards,\n" +
-                          "Manish Pandey\n" +
-                          "HMPManish\n\n" +
-                          "GitHub: https://github.com/hmpmanish\n" +
-                          "Portfolio: https://hmpmanish.github.io/info/";
-                          
-        MailApp.sendEmail({
-          to: email,
-          subject: visitorSubject,
-          body: visitorBody,
-          name: "HMPManish"
-        });
-        console.log("3. Visitor auto-reply sent successfully.");
-      } catch (visitorMailError) {
-        console.error("Failed to send visitor email: " + visitorMailError);
-      }
+    // 4. Save to Google Sheet
+    try {
+      saveToSheet(name, email, phone, subject, message, autoReplyStatus);
+    } catch (error) {
+      // Even if saving to the sheet fails, we continue because emails might have succeeded
+      console.error("Sheet Error: " + error.message);
+      // Fallback: If sheet fails but we need to log it, you could email yourself the error here
+    }
+    
+    // 5. Final Response
+    if (autoReplyStatus === "Sent" || adminNotificationStatus === "Sent") {
+      return createJsonResponse(true, "Message sent successfully");
     } else {
-      console.log("Visitor email format is invalid. Auto-reply skipped.");
+      return createJsonResponse(false, `Error details -> Auto-reply: ${autoReplyStatus} | Admin: ${adminNotificationStatus}`);
     }
-    
-    // 5. Send Notification to Owner
-    try {
-      var ownerEmail = "hmpmanish.dev@gmail.com";
-      var ownerSubject = "New Portfolio Contact — " + name;
-      var ownerBody = "You have received a new message from your portfolio.\n\n" +
-                      "Name: " + name + "\n" +
-                      "Email: " + email + "\n" +
-                      "Subject: " + subject + "\n" +
-                      "Time: " + timestamp + "\n\n" +
-                      "Message:\n" + message;
-                      
-      MailApp.sendEmail({
-        to: ownerEmail,
-        subject: ownerSubject,
-        body: ownerBody
-      });
-      console.log("4. Owner notification sent successfully.");
-    } catch (ownerMailError) {
-      console.error("Failed to send owner email: " + ownerMailError);
-    }
-    
-    // 6. Return Success
-    console.log("5. Execution completed successfully.");
-    return ContentService.createTextOutput(JSON.stringify({"result": "success"}))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch (globalError) {
-    console.error("Global Error: " + globalError.toString());
-    return ContentService.createTextOutput(JSON.stringify({"result": "error", "error": globalError.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    return createJsonResponse(false, "System error: " + error.toString());
   }
+}
+
+// Handle GET requests (useful for verifying the Web App is live)
+function doGet(e) {
+  return HtmlService.createHtmlOutput("Contact Form Web App is running correctly. Please use POST to submit data.");
+}
+
+// Helper: Create JSON response
+function createJsonResponse(success, message) {
+  const response = {
+    success: success,
+    message: message
+  };
+  return ContentService.createTextOutput(JSON.stringify(response))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Helper: Validate email format
+function isValidEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
+// Helper: Send Auto-Reply to Visitor
+function sendAutoReply(name, email, phone, subject, message) {
+  const emailSubject = "Thank You for Contacting Us";
+  
+  // Plain text fallback
+  const textBody = `Hello ${name},\n\nThank you for contacting us. We have successfully received your message.\n\nHere are the details you submitted:\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nSubject: ${subject}\nMessage: ${message}\n\nOur team will review your request and get back to you as soon as possible.\n\nBest regards,\n${CONFIG.MY_NAME}\n${CONFIG.WEBSITE_NAME}`;
+
+  // Beautiful HTML Email Template (Brand style)
+  const htmlBody = `
+  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 20px; border-radius: 12px;">
+    
+    <!-- Header with Logo -->
+    <div style="background-color: #070a13; padding: 35px 20px; text-align: center; border-radius: 12px 12px 0 0;">
+      <!-- PUT YOUR HOSTED LOGO URL HERE in the src attribute -->
+      <img src="https://via.placeholder.com/400x200/070a13/4f46e5?text=HMP+Manish+Logo+Here" alt="${CONFIG.WEBSITE_NAME} Logo" style="max-height: 80px; width: auto; margin-bottom: 15px;">
+      <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; display: none;">${CONFIG.WEBSITE_NAME}</h1>
+    </div>
+    
+    <!-- Body -->
+    <div style="background-color: #ffffff; padding: 40px 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+      <h2 style="color: #0f172a; font-size: 22px; margin-top: 0; margin-bottom: 15px;">Hi ${name},</h2>
+      <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+        Thank you for reaching out! We have successfully received your message. Our team is carefully reviewing your request and will get back to you as soon as possible.
+      </p>
+      
+      <!-- Summary Box -->
+      <div style="background-color: #f1f5f9; padding: 25px; border-radius: 8px; border-left: 4px solid #4f46e5; margin-bottom: 30px;">
+        <h3 style="color: #334155; font-size: 14px; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Message Details</h3>
+        <p style="color: #475569; margin: 8px 0; font-size: 15px;"><strong>Email:</strong> ${email}</p>
+        <p style="color: #475569; margin: 8px 0; font-size: 15px;"><strong>Phone:</strong> ${phone}</p>
+        <p style="color: #475569; margin: 8px 0; font-size: 15px;"><strong>Subject:</strong> ${subject}</p>
+        <p style="color: #475569; margin: 15px 0 5px 0; font-size: 15px;"><strong>Message:</strong></p>
+        <div style="color: #334155; font-size: 15px; background: #ffffff; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; white-space: pre-wrap; font-style: italic;">"${message}"</div>
+      </div>
+      
+      <!-- Signature -->
+      <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 0;">
+        Best regards,<br>
+        <strong style="color: #0f172a;">${CONFIG.MY_NAME}</strong><br>
+        <span style="color: #64748b; font-size: 14px;">BUILD • CODE • INNOVATE</span>
+      </p>
+    </div>
+    
+    <!-- Footer with Social Media -->
+    <div style="text-align: center; padding: 25px 20px 10px 20px;">
+      
+      <!-- Social Media Icons (Update the href links with your actual profile URLs) -->
+      <div style="margin-bottom: 20px;">
+        <a href="https://linkedin.com/in/your-profile" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 24px; height: 24px;">
+        </a>
+        <a href="https://github.com/your-username" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub" style="width: 24px; height: 24px;">
+        </a>
+        <a href="https://twitter.com/your-handle" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733590.png" alt="Twitter" style="width: 24px; height: 24px;">
+        </a>
+        <a href="https://instagram.com/your-handle" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="width: 24px; height: 24px;">
+        </a>
+        <a href="https://youtube.com/c/your-channel" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" style="width: 24px; height: 24px;">
+        </a>
+      </div>
+
+      <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin: 0;">
+        This is an automated response. Please do not reply directly to this email.<br>
+        &copy; ${new Date().getFullYear()} ${CONFIG.WEBSITE_NAME}. All rights reserved.
+      </p>
+    </div>
+    
+  </div>
+  `;
+
+  MailApp.sendEmail({
+    to: email,
+    subject: emailSubject,
+    body: textBody,       // For older email clients that don't support HTML
+    htmlBody: htmlBody,   // The beautiful HTML version
+    name: CONFIG.WEBSITE_NAME
+  });
+}
+
+// Helper: Send Notification to You
+function sendAdminNotification(name, email, phone, subject, message) {
+  const emailSubject = `New Contact Form Submission: ${subject}`;
+  
+  const emailBody = `You have received a new contact form submission.
+
+Details:
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Subject: ${subject}
+Message: ${message}
+
+(You can reply directly to this email to reach the visitor.)`;
+
+  MailApp.sendEmail({
+    to: CONFIG.MY_EMAIL,
+    subject: emailSubject,
+    body: emailBody,
+    replyTo: email, // This allows you to hit "Reply" and email the visitor directly
+    name: `${name} (via Website)`
+  });
+}
+
+// Helper: Save details to Google Sheet
+function saveToSheet(name, email, phone, subject, message, autoReplyStatus) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
+  if (!sheet) {
+    throw new Error("Sheet '" + CONFIG.SHEET_NAME + "' not found. Please check CONFIG.SHEET_NAME.");
+  }
+  
+  const timestamp = new Date();
+  
+  // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status
+  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus]);
 }

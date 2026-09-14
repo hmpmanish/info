@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us</title>
+  <style>
+    /* Premium Modern Aesthetics */
+    :root {
+      --primary-color: #4f46e5; /* Indigo 600 */
+      --primary-hover: #4338ca; /* Indigo 700 */
+      --bg-color: #0f172a; /* Slate 900 */
+      --card-bg: #1e293b; /* Slate 800 */
+      --text-color: #f8fafc; /* Slate 50 */
+      --text-muted: #94a3b8; /* Slate 400 */
+      --border-color: #334155; /* Slate 700 */
+      --success-color: #10b981; /* Emerald 500 */
+      --error-color: #ef4444; /* Red 500 */
+      --input-bg: #0f172a; 
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .contact-container {
+      background-color: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid var(--border-color);
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-color);
+      font-size: 1rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 0.875rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out, transform 0.1s;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: var(--primary-hover);
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      background-color: var(--border-color);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    #statusMessage {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      display: none;
+      text-align: center;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .success {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .error {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--error-color);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contact-container">
+    <h2>Get in Touch</h2>
+    <p class="subtitle">We'd love to hear from you. Send us a message!</p>
+    
+    <form id="contactForm">
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name" placeholder="John Doe" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" placeholder="john@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number (optional)</label>
+        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000">
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject (optional)</label>
+        <input type="text" id="subject" name="subject" placeholder="How can we help?">
+      </div>
+
+      <div class="form-group">
+        <label for="message">Message *</label>
+        <textarea id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+      </div>
+
+      <button type="submit" id="submitBtn">Send Message</button>
+    </form>
+
+    <div id="statusMessage"></div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // IMPORTANT: REPLACE THE URL BELOW WITH YOUR DEPLOYED WEB APP URL
+    // =========================================================================
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGWiI1eFNtEuF4cRzaW3fZT2SteIBMGvEV1Cvoyrur_aJa0QtZIVPTKtAaucy8SkYY/exec";
+
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMessage = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default page reload
+      
+      // Basic client-side validation
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !message) {
+        showMessage('error', 'Please fill in all required fields.');
+        return;
+      }
+
+      // Convert form to URLSearchParams format for Google Apps Script 'e.parameter' parsing
+      const formData = new FormData(form);
+      const urlEncodedData = new URLSearchParams(formData);
+
+      // UI updates during submission
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+      statusMessage.style.display = 'none';
+
+      try {
+        // We use fetch with mode: 'cors' and send the data as x-www-form-urlencoded
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: urlEncodedData
+        });
+
+        // Try parsing JSON response
+        const result = await response.json();
+
+        if (result.success) {
+          showMessage('success', result.message || 'Message sent successfully!');
+          form.reset();
+        } else {
+          showMessage('error', result.message || 'Something went wrong.');
+        }
+      } catch (error) {
+        // If there's a network error or CORS block
+        showMessage('error', 'Network error. Please try again later.');
+        console.error('Submission Error:', error);
+      } finally {
+        // Restore button state
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send Message";
+      }
+    });
+
+    // Helper to display styled messages
+    function showMessage(type, text) {
+      statusMessage.textContent = text;
+      statusMessage.className = type;
+      statusMessage.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
