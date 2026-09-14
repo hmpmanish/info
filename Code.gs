@@ -63,21 +63,25 @@ function doPost(e) {
       adminNotificationStatus = "Failed: " + error.message;
     }
     
+    let chatNotificationStatus = "Skipped";
     // 3.5 Send Chat Notifications (Telegram / WhatsApp)
     try {
       if (CONFIG.TELEGRAM_BOT_TOKEN && CONFIG.TELEGRAM_CHAT_ID) {
         sendTelegramNotification(name, email, phone, subject, message);
+        chatNotificationStatus = "Sent (Telegram)";
       }
       if (CONFIG.WHATSAPP_PHONE && CONFIG.WHATSAPP_API_KEY) {
         sendWhatsAppNotification(name, email, phone, subject, message);
+        chatNotificationStatus = "Sent (WhatsApp)";
       }
     } catch (error) {
+      chatNotificationStatus = "Error: " + error.message;
       console.error("Chat Notification Error: " + error.message);
     }
     
     // 4. Save to Google Sheet
     try {
-      saveToSheet(name, email, phone, subject, message, autoReplyStatus);
+      saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus);
     } catch (error) {
       // Even if saving to the sheet fails, we continue because emails might have succeeded
       console.error("Sheet Error: " + error.message);
@@ -86,7 +90,7 @@ function doPost(e) {
     
     // 5. Final Response
     if (autoReplyStatus === "Sent" || adminNotificationStatus === "Sent") {
-      return createJsonResponse(true, "Message sent successfully");
+      return createJsonResponse(true, "Message sent successfully (v2.1) [Chat: " + chatNotificationStatus + "]");
     } else {
       return createJsonResponse(false, `Error details -> Auto-reply: ${autoReplyStatus} | Admin: ${adminNotificationStatus}`);
     }
@@ -225,7 +229,7 @@ Message: ${message}
 }
 
 // Helper: Save details to Google Sheet
-function saveToSheet(name, email, phone, subject, message, autoReplyStatus) {
+function saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) {
     throw new Error("Sheet '" + CONFIG.SHEET_NAME + "' not found. Please check CONFIG.SHEET_NAME.");
@@ -233,8 +237,8 @@ function saveToSheet(name, email, phone, subject, message, autoReplyStatus) {
   
   const timestamp = new Date();
   
-  // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status
-  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus]);
+  // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status | Chat Status
+  sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus || "Unknown"]);
 }
 
 // ==========================================
