@@ -3,7 +3,19 @@ const CONFIG = {
   MY_EMAIL: "hmpmanish@gmail.com", // REPLACE WITH: Your email address to receive notifications
   MY_NAME: "HMP Manish",  // REPLACE WITH: Your name or your website's name
   WEBSITE_NAME: "HMP Manish",         // REPLACE WITH: Your website name
-  SHEET_NAME: "Form Responses"        // EXACT name of the sheet inside your Google Spreadsheet
+  SHEET_NAME: "Form Responses",       // EXACT name of the sheet inside your Google Spreadsheet
+  
+  // ==========================================
+  // FREE CHAT NOTIFICATIONS (Optional)
+  // ==========================================
+  
+  // Telegram Bot Settings
+  TELEGRAM_BOT_TOKEN: "", // e.g. "123456789:ABCdefGHIjkl..."
+  TELEGRAM_CHAT_ID: "",   // e.g. "12345678"
+  
+  // WhatsApp Settings via CallMeBot
+  WHATSAPP_PHONE: "",     // Your phone number with country code, e.g. "+919876543210"
+  WHATSAPP_API_KEY: ""    // Your CallMeBot API key
 };
 
 function doPost(e) {
@@ -49,6 +61,18 @@ function doPost(e) {
       adminNotificationStatus = "Sent";
     } catch (error) {
       adminNotificationStatus = "Failed: " + error.message;
+    }
+    
+    // 3.5 Send Chat Notifications (Telegram / WhatsApp)
+    try {
+      if (CONFIG.TELEGRAM_BOT_TOKEN && CONFIG.TELEGRAM_CHAT_ID) {
+        sendTelegramNotification(name, email, phone, subject, message);
+      }
+      if (CONFIG.WHATSAPP_PHONE && CONFIG.WHATSAPP_API_KEY) {
+        sendWhatsAppNotification(name, email, phone, subject, message);
+      }
+    } catch (error) {
+      console.error("Chat Notification Error: " + error.message);
     }
     
     // 4. Save to Google Sheet
@@ -211,4 +235,25 @@ function saveToSheet(name, email, phone, subject, message, autoReplyStatus) {
   
   // Columns matching requirement: Timestamp | Name | Email | Phone | Subject | Message | Auto Reply Status
   sheet.appendRow([timestamp, name, email, phone, subject, message, autoReplyStatus]);
+}
+
+// ==========================================
+// CHAT NOTIFICATION HELPERS
+// ==========================================
+
+// Helper: Send Telegram Notification
+function sendTelegramNotification(name, email, phone, subject, message) {
+  const text = `🚨 *New Contact Form Submission*\n\n*Name:* ${name}\n*Email:* ${email}\n*Phone:* ${phone}\n*Subject:* ${subject}\n\n*Message:*\n${message}`;
+  const url = `https://api.telegram.org/bot${CONFIG.TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const payload = { chat_id: CONFIG.TELEGRAM_CHAT_ID, text: text, parse_mode: "Markdown" };
+  const options = { method: "post", contentType: "application/json", payload: JSON.stringify(payload) };
+  UrlFetchApp.fetch(url, options);
+}
+
+// Helper: Send WhatsApp Notification via CallMeBot
+function sendWhatsAppNotification(name, email, phone, subject, message) {
+  const text = `🚨 *New Contact Form Submission*\n\n*Name:* ${name}\n*Email:* ${email}\n*Phone:* ${phone}\n*Subject:* ${subject}\n\n*Message:*\n${message}`;
+  const encodedText = encodeURIComponent(text);
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${CONFIG.WHATSAPP_PHONE}&text=${encodedText}&apikey=${CONFIG.WHATSAPP_API_KEY}`;
+  UrlFetchApp.fetch(url);
 }
