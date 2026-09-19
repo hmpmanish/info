@@ -590,13 +590,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if(hamburger) hamburger.addEventListener('click', () => mobileMenu.classList.toggle('active'));
     mobileLinks.forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
 
-    // --- 17. AI ASSISTANT WIDGET ---
+    // --- 17. AI ASSISTANT WIDGET (UPGRADED) ---
     const aiToggle = document.getElementById('ai-toggle');
     const aiWidget = document.getElementById('ai-widget');
     const aiClose = document.getElementById('ai-close');
     const aiInput = document.getElementById('ai-input');
     const aiSend = document.getElementById('ai-send');
     const aiBody = document.getElementById('ai-body');
+    const aiChips = document.querySelectorAll('.ai-chip');
+
+    let aiIsTyping = false;
 
     if(aiToggle) {
         aiToggle.addEventListener('click', () => {
@@ -605,28 +608,116 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     if(aiClose) aiClose.addEventListener('click', () => aiWidget.classList.remove('active'));
+
+    // AI Knowledge Base (Rule-Based Engine)
+    function getAiResponse(input) {
+        const q = input.toLowerCase();
+        
+        if (q.includes('who is') || q.includes('about manish') || q.includes('who are you')) {
+            return "Manish Pandey is a highly skilled **Full Stack Developer** and **AI Enthusiast** based in Mumbai. He specializes in building scalable web applications and intelligent systems. 🚀";
+        }
+        else if (q.includes('skill') || q.includes('tech stack') || q.includes('languages') || q.includes('top skill')) {
+            return "Manish is proficient in:\n<ul><li>**Frontend**: HTML, CSS, JS, React, Tailwind</li><li>**Backend**: Node.js, Python, Django, SQL/NoSQL</li><li>**AI**: Machine Learning, NLP, Computer Vision</li></ul>";
+        }
+        else if (q.includes('project') || q.includes('work') || q.includes('portfolio')) {
+            return "Some of Manish's top projects include:\n- **Pandey Traders App**: A full-featured E-commerce app\n- **AI Image Generator**: A stable diffusion implementation\n- **Smart Chatbots**: Context-aware AI assistants\nCheck out the Projects section for more!";
+        }
+        else if (q.includes('github') || q.includes('repo')) {
+            return "You can check out his open-source work on GitHub at [github.com/hmpmanish](https://github.com/hmpmanish). He has dozens of repositories with high-quality code!";
+        }
+        else if (q.includes('contact') || q.includes('email') || q.includes('hire') || q.includes('message') || q.includes('send email')) {
+            return "You can easily reach out to him via the **Contact Form** at the bottom of the page, or email him directly. I can also send him a message for you right now! Just type **'Send message: [your message]'**.";
+        }
+        else if (q.startsWith('send message:')) {
+            const msg = input.substring(13).trim();
+            if(msg.length < 5) return "Please write a bit more so Manish understands your message!";
+            
+            // Trigger contact form webhook directly!
+            const formData = new FormData();
+            formData.append('name', 'AI Widget User');
+            formData.append('email', 'ai-widget@visitor.com');
+            formData.append('subject', 'Message via AI Widget');
+            formData.append('message', msg);
+            formData.append('language', navigator.language || 'en');
+            
+            // We use the WEB_APP_URL defined later in the script
+            if(typeof WEB_APP_URL !== 'undefined') {
+                fetch(WEB_APP_URL, { method: 'POST', body: new URLSearchParams(formData) }).catch(e=>console.error(e));
+            }
+            
+            return "✅ **Message sent!** Manish will receive this notification on his phone shortly.";
+        }
+        else if (q.includes('hello') || q.includes('hi ') || q === 'hi' || q.includes('hey')) {
+            return "Hello there! 👋 How can I help you today? You can ask me about Manish's skills, projects, or how to contact him.";
+        }
+        else if (q.includes('thank')) {
+            return "You're welcome! Let me know if there is anything else you need.";
+        }
+        else {
+            return "I'm still learning! 🤖 I am best at answering questions about Manish's **Skills**, **Projects**, or **Contact info**. Feel free to try one of those, or use the contact form to reach him directly.";
+        }
+    }
+
+    // Parse simple markdown (bold, links)
+    function parseMarkdown(text) {
+        let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // bold
+        html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color:var(--accent-color);text-decoration:underline;">$1</a>'); // links
+        return html;
+    }
     
-    function sendAiMsg() {
-        const text = aiInput.value.trim();
+    function sendAiMsg(customText = null) {
+        if(aiIsTyping) return; // Prevent spamming
+        
+        const text = customText || aiInput.value.trim();
         if(!text) return;
+        
+        // Add User Message
         const userMsg = document.createElement('div');
         userMsg.className = 'ai-msg ai-user';
         userMsg.innerText = text;
         aiBody.appendChild(userMsg);
-        aiInput.value = '';
+        
+        if(!customText) aiInput.value = '';
+        aiBody.scrollTop = aiBody.scrollHeight;
+        aiIsTyping = true;
+        
+        // Add Typing Indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'ai-msg ai-sys typing-indicator';
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+        aiBody.appendChild(typingIndicator);
         aiBody.scrollTop = aiBody.scrollHeight;
         
+        // Calculate dynamic delay based on response length
+        const responseText = getAiResponse(text);
+        const delay = Math.max(800, Math.min(2500, responseText.length * 15));
+        
         setTimeout(() => {
+            // Remove typing indicator
+            if(aiBody.contains(typingIndicator)) aiBody.removeChild(typingIndicator);
+            
+            // Add System Message
             const sysMsg = document.createElement('div');
             sysMsg.className = 'ai-msg ai-sys';
-            sysMsg.innerText = "I'm the HMP Assistant. Manish is currently developing next-gen software, but you can send an email via the contact section!";
+            sysMsg.innerHTML = parseMarkdown(responseText);
             aiBody.appendChild(sysMsg);
             aiBody.scrollTop = aiBody.scrollHeight;
+            
             playClickSound(); // notification sound
-        }, 800);
+            aiIsTyping = false;
+        }, delay);
     }
     
-    if(aiSend) aiSend.addEventListener('click', sendAiMsg);
+    // Quick Action Chips
+    if (aiChips) {
+        aiChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                sendAiMsg(chip.innerText);
+            });
+        });
+    }
+
+    if(aiSend) aiSend.addEventListener('click', () => sendAiMsg());
     if(aiInput) aiInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendAiMsg(); });
 
     // --- 18. LIGHTBOX ---
