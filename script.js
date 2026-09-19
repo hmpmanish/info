@@ -783,7 +783,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    body: formData
+                    body: new URLSearchParams(formData)
                 });
 
                 const result = await response.json();
