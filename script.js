@@ -887,3 +887,38 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(e => console.error('IPAPI Error:', e));
     }
 });
+
+// CINEMATIC PAGE TRANSITIONS
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if(targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if(!targetElement) return;
+
+        e.preventDefault(); 
+        
+        const overlay = document.getElementById('cinematic-overlay');
+        if(overlay) {
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'instant'
+                });
+                
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                }, 100);
+            }, 400); 
+        } else {
+            window.scrollTo({
+                top: targetElement.offsetTop - 70,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
