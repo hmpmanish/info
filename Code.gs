@@ -44,12 +44,12 @@ function doPost(e) {
       const language = e.parameter.language || "";
       
       const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-      let sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
+      // Automatically select the very first tab from the left, regardless of its name!
+      let sheet = spreadsheet.getSheets()[0];
       
-      // Auto-create sheet with ALL 21 headers if it doesn't exist
-      if (!sheet) {
-        sheet = spreadsheet.insertSheet(CONFIG.SHEET_NAME);
-        sheet.appendRow(["Timestamp", "Event Type", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply", "Chat Status", "IP Address", "City", "State/Region", "Country", "ISP", "Lat/Long", "OS", "Browser", "Screen", "Referrer", "Timezone", "Language"]);
+      // Auto-create headers ONLY if the sheet is completely empty
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(["Timestamp", "Event Type", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply Status", "Chat Status", "IP Address", "City", "State / Region", "Country", "ISP", "Lat / Long", "OS", "Browser", "Screen Resolution", "Referrer", "Timezone", "Language"]);
         sheet.getRange(1, 1, 1, 21).setFontWeight("bold");
       }
       
@@ -110,20 +110,21 @@ function doPost(e) {
       console.error("Chat Notification Error: " + error.message);
     }
     
+    let sheetStatus = "Saved successfully";
     // 4. Save to Google Sheet
     try {
       saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus);
     } catch (error) {
       // Even if saving to the sheet fails, we continue because emails might have succeeded
+      sheetStatus = "Failed: " + error.message;
       console.error("Sheet Error: " + error.message);
-      // Fallback: If sheet fails but we need to log it, you could email yourself the error here
     }
     
     // 5. Final Response
     if (autoReplyStatus === "Sent" || adminNotificationStatus === "Sent") {
-      return createJsonResponse(true, "Message sent successfully (v2.1) [Chat: " + chatNotificationStatus + "]");
+      return createJsonResponse(true, `Message Sent! [Sheet: ${sheetStatus}] [Chat: ${chatNotificationStatus}]`);
     } else {
-      return createJsonResponse(false, `Error details -> Auto-reply: ${autoReplyStatus} | Admin: ${adminNotificationStatus}`);
+      return createJsonResponse(false, `Error details -> Sheet: ${sheetStatus} | Auto-reply: ${autoReplyStatus} | Admin: ${adminNotificationStatus}`);
     }
 
   } catch (error) {
@@ -262,12 +263,12 @@ Message: ${message}
 // Helper: Save details to Google Sheet
 function saveToSheet(name, email, phone, subject, message, autoReplyStatus, chatNotificationStatus) {
   const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-  let sheet = spreadsheet.getSheetByName(CONFIG.SHEET_NAME);
+  // Automatically select the very first tab from the left, regardless of its name!
+  let sheet = spreadsheet.getSheets()[0];
   
-  // Auto-create sheet with 21 headers if it doesn't exist
-  if (!sheet) {
-    sheet = spreadsheet.insertSheet(CONFIG.SHEET_NAME);
-    sheet.appendRow(["Timestamp", "Event Type", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply", "Chat Status", "IP Address", "City", "State/Region", "Country", "ISP", "Lat/Long", "OS", "Browser", "Screen", "Referrer", "Timezone", "Language"]);
+  // Auto-create 21 headers ONLY if the sheet is completely empty
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["Timestamp", "Event Type", "Name", "Email", "Phone", "Subject", "Message", "Auto Reply Status", "Chat Status", "IP Address", "City", "State / Region", "Country", "ISP", "Lat / Long", "OS", "Browser", "Screen Resolution", "Referrer", "Timezone", "Language"]);
     sheet.getRange(1, 1, 1, 21).setFontWeight("bold");
   }
   

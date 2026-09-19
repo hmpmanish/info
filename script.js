@@ -183,8 +183,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const rect = el.getBoundingClientRect();
             if(rect.top < window.innerHeight) {
                 el.classList.add('active');
+                const counters = el.querySelectorAll('.counter');
+                if(counters.length > 0) {
+                    counters.forEach(counter => animateCounter(counter));
+                }
             }
         });
+    }
+    
+    function animateCounter(counter) {
+        if (counter.dataset.animated) return;
+        counter.dataset.animated = 'true';
+        
+        const target = +counter.getAttribute('data-target') || 0;
+        if (target === 0) return;
+        
+        const duration = 2000; 
+        const stepTime = Math.abs(Math.floor(duration / (target || 1))) || 10;
+        let current = 0;
+        
+        if (counter.dataset.timerId) clearInterval(parseInt(counter.dataset.timerId));
+        
+        const timer = setInterval(() => {
+            current += Math.ceil(target / 100) || 1;
+            if (current >= target) {
+                counter.innerText = target + '+';
+                clearInterval(timer);
+            } else {
+                counter.innerText = current;
+            }
+        }, stepTime);
+        
+        counter.dataset.timerId = timer;
     }
 
     // --- 6. INTERSECTION OBSERVER FOR REVEALS ---
@@ -197,20 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const counters = entry.target.querySelectorAll('.counter');
             if(counters.length > 0) {
                 counters.forEach(counter => {
-                    const target = +counter.getAttribute('data-target');
-                    const duration = 2000; 
-                    const stepTime = Math.abs(Math.floor(duration / (target || 1)));
-                    let current = 0;
-                    
-                    const timer = setInterval(() => {
-                        current += Math.ceil(target / 100) || 1;
-                        if (current >= target) {
-                            counter.innerText = target + '+';
-                            clearInterval(timer);
-                        } else {
-                            counter.innerText = current;
-                        }
-                    }, stepTime);
+                    animateCounter(counter);
                 });
             }
             observer.unobserve(entry.target);
@@ -660,7 +677,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const formData = new FormData(contactForm);
-            const urlEncodedData = new URLSearchParams(formData);
 
             submitBtn.disabled = true;
             submitBtnText.textContent = "Sending...";
@@ -669,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(WEB_APP_URL, {
                     method: 'POST',
-                    body: urlEncodedData
+                    body: formData
                 });
 
                 const result = await response.json();
@@ -696,210 +712,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if(type === 'success') {
             statusMessage.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
             statusMessage.style.color = '#10b981';
-        toast.className = 'toast';
-        toast.innerHTML = `<i class="${iconClass} toast-icon"></i><span>${message}</span>`;
-        toastContainer.appendChild(toast);
-        void toast.offsetWidth; 
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 400);
-        }, 3500);
-    }
-
-    // --- 15. TERMINAL EASTER EGG ---
-    let keys = [];
-    const secretCode = 'dev'; 
-    window.addEventListener('keydown', (e) => {
-        keys.push(e.key.toLowerCase());
-        keys.splice(-secretCode.length - 1, keys.length - secretCode.length);
-        if (keys.join('').includes(secretCode)) {
-            const terminal = document.getElementById('fake-terminal');
-            if(terminal) {
-                terminal.classList.add('active');
-                document.getElementById('term-input').focus();
-            }
-        }
-    });
-    
-    const termInput = document.getElementById('term-input');
-    const termBody = document.getElementById('term-body');
-    const termClose = document.querySelector('.term-close');
-    
-    if(termClose) {
-        termClose.addEventListener('click', () => document.getElementById('fake-terminal').classList.remove('active'));
-    }
-    
-    if(termInput) {
-        termInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const val = termInput.value.trim();
-                termInput.value = '';
-                const line = document.createElement('p');
-                line.innerHTML = `<span class="prompt">guest@hmpmanish:~$</span> ${val}`;
-                termBody.insertBefore(line, termBody.lastElementChild);
-                
-                const response = document.createElement('p');
-                if (val === 'help') response.innerHTML = 'Commands: about, clear, github, exit';
-                else if (val === 'about') response.innerHTML = 'HMPManish OS v3.0 - Building intelligent software.';
-                else if (val === 'clear') {
-                    termBody.querySelectorAll('p:not(:last-child)').forEach(l => l.remove());
-                    return;
-                } else if (val === 'github') {
-                    response.innerHTML = 'Opening GitHub...';
-                    window.open('https://github.com/hmpmanish', '_blank');
-                } else if (val === 'exit') {
-                    document.getElementById('fake-terminal').classList.remove('active');
-                    return;
-                } else if (val !== '') {
-                    response.innerHTML = `command not found: ${val}`;
-                }
-                
-                if(val !== '') termBody.insertBefore(response, termBody.lastElementChild);
-                termBody.scrollTop = termBody.scrollHeight;
-            }
-        });
-    }
-
-    // --- 16. MOBILE MENU ---
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileLinks = document.querySelectorAll('.mobile-link');
-    if(hamburger) hamburger.addEventListener('click', () => mobileMenu.classList.toggle('active'));
-    mobileLinks.forEach(link => link.addEventListener('click', () => mobileMenu.classList.remove('active')));
-
-    // --- 17. AI ASSISTANT WIDGET ---
-    const aiToggle = document.getElementById('ai-toggle');
-    const aiWidget = document.getElementById('ai-widget');
-    const aiClose = document.getElementById('ai-close');
-    const aiInput = document.getElementById('ai-input');
-    const aiSend = document.getElementById('ai-send');
-    const aiBody = document.getElementById('ai-body');
-
-    if(aiToggle) {
-        aiToggle.addEventListener('click', () => {
-            aiWidget.classList.toggle('active');
-            if(aiWidget.classList.contains('active')) aiInput.focus();
-        });
-    }
-    if(aiClose) aiClose.addEventListener('click', () => aiWidget.classList.remove('active'));
-    
-    function sendAiMsg() {
-        const text = aiInput.value.trim();
-        if(!text) return;
-        const userMsg = document.createElement('div');
-        userMsg.className = 'ai-msg ai-user';
-        userMsg.innerText = text;
-        aiBody.appendChild(userMsg);
-        aiInput.value = '';
-        aiBody.scrollTop = aiBody.scrollHeight;
-        
-        setTimeout(() => {
-            const sysMsg = document.createElement('div');
-            sysMsg.className = 'ai-msg ai-sys';
-            sysMsg.innerText = "I'm the HMP Assistant. Manish is currently developing next-gen software, but you can send an email via the contact section!";
-            aiBody.appendChild(sysMsg);
-            aiBody.scrollTop = aiBody.scrollHeight;
-            playClickSound(); // notification sound
-        }, 800);
-    }
-    
-    if(aiSend) aiSend.addEventListener('click', sendAiMsg);
-    if(aiInput) aiInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendAiMsg(); });
-
-    // --- 18. LIGHTBOX ---
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxClose = document.querySelector('.lightbox-close');
-    const galleryImgs = document.querySelectorAll('.project-img-container img');
-
-    galleryImgs.forEach(img => {
-        img.addEventListener('click', () => {
-            if(!lightbox) return;
-            lightboxImg.src = img.src;
-            lightbox.classList.add('active');
-        });
-    });
-
-    if(lightboxClose) lightboxClose.addEventListener('click', () => lightbox.classList.remove('active'));
-    if(lightbox) lightbox.addEventListener('click', (e) => {
-        if(e.target === lightbox) lightbox.classList.remove('active');
-    });
-
-    // Duplicate tech marquee items
-    const track = document.querySelector('.tech-track');
-    if (track) track.innerHTML += track.innerHTML;
-
-    // =========================================================================
-    // CONTACT FORM GOOGLE APPS SCRIPT INTEGRATION
-    // =========================================================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyHElDQAGWdedngsB2yek8_bQtapfoT7YJZ_OR5PBp7BItoKSSFDE6Z7M4cG5VNK9lB/exec";
-    
-    const contactForm = document.getElementById('contact-form');
-    const submitBtn = document.getElementById('submitBtn');
-    const submitBtnText = document.getElementById('submitBtnText');
-    const statusMessage = document.getElementById('statusMessage');
-
-    if (contactForm) {
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); 
-            
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const subject = document.getElementById('subject').value.trim();
-            const message = document.getElementById('message').value.trim();
-
-            if (!name || !email || !message) {
-                showStatusMessage('error', 'Please fill in all required fields.');
-                return;
-            }
-
-            const formData = new FormData(contactForm);
-            const urlEncodedData = new URLSearchParams(formData);
-
-            submitBtn.disabled = true;
-            submitBtnText.textContent = "Sending...";
-            statusMessage.style.display = 'none';
-
-            try {
-                const response = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    body: urlEncodedData
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    showStatusMessage('success', result.message || 'Message sent successfully!');
-                    contactForm.reset();
-                } else {
-                    showStatusMessage('error', result.message || 'Something went wrong.');
-                }
-            } catch (error) {
-                showStatusMessage('error', 'Network error. Please try again later.');
-                console.error('Submission Error:', error);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtnText.textContent = "Send Transmission";
-            }
-        });
-    }
-
-    function showStatusMessage(type, text) {
-        statusMessage.textContent = text;
-        statusMessage.style.display = 'block';
-        if(type === 'success') {
-            statusMessage.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
-            statusMessage.style.color = '#10b981';
-            statusMessage.style.border = '1px solid rgba(16, 185, 129, 0.2)';
         } else {
             statusMessage.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
             statusMessage.style.color = '#ef4444';
-            statusMessage.style.border = '1px solid rgba(239, 68, 68, 0.2)';
         }
     }
 
-    // =========================================================================
     // 15. LIVE GITHUB STATS
     // =========================================================================
     const githubUsername = 'hmpmanish';
@@ -910,11 +728,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const followersStat = document.getElementById('stat-followers');
             if (reposStat && data.public_repos !== undefined) {
                 reposStat.setAttribute('data-target', data.public_repos);
-                reposStat.textContent = data.public_repos;
+                reposStat.dataset.animated = ''; // Reset animation state
+                animateCounter(reposStat);
             }
             if (followersStat && data.followers !== undefined) {
                 followersStat.setAttribute('data-target', data.followers);
-                followersStat.textContent = data.followers;
+                followersStat.dataset.animated = ''; // Reset animation state
+                animateCounter(followersStat);
             }
         })
         .catch(err => console.error("GitHub Fetch Error:", err));
