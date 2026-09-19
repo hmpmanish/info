@@ -612,10 +612,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apps Script Backend URL
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGWiI1eFNtEuF4cRzaW3fZT2SteIBMGvEV1Cvoyrur_aJa0QtZIVPTKtAaucy8SkYY/exec";
 
-    // Parse simple markdown (bold, links)
+    // Parse simple markdown (bold, links, newlines)
     function parseMarkdown(text) {
+        if (!text) return "";
         let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // bold
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>'); // italic
         html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color:var(--accent-color);text-decoration:underline;">$1</a>'); // links
+        html = html.replace(/\n/g, '<br>'); // newlines
         return html;
     }
     
