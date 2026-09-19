@@ -16,7 +16,12 @@ const CONFIG = {
   
   // WhatsApp Settings via CallMeBot
   WHATSAPP_PHONE: "",     // Your phone number with country code, e.g. "+919876543210"
-  WHATSAPP_API_KEY: ""    // Your CallMeBot API key
+  WHATSAPP_API_KEY: "",    // Your CallMeBot API key
+
+  // ==========================================
+  // GEMINI AI SETTINGS
+  // ==========================================
+  GEMINI_API_KEY: "YOUR_GEMINI_API_KEY_HERE" // REPLACE WITH: Your Gemini API Key from Google AI Studio
 };
 
 function doPost(e) {
@@ -55,6 +60,26 @@ function doPost(e) {
       
       sheet.appendRow([new Date(), eventType, "", "", "", "", "", "", "", ip, city, region, country, isp, latlong, os, browser, screen, referrer, timezone, language]);
       return createJsonResponse(true, "Visit logged silently in main sheet.");
+    }
+    
+    // NEW: Chat with AI Action
+    if (e.parameter.action === 'chat') {
+      const userMessage = e.parameter.message || "";
+      if (userMessage.trim() === "") {
+        return createJsonResponse(false, "Message is empty.");
+      }
+      
+      if (!CONFIG.GEMINI_API_KEY || CONFIG.GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+        return createJsonResponse(true, "I'm currently undergoing maintenance (API Key not set). Please use the contact form to reach Manish directly!");
+      }
+      
+      try {
+        const aiResponse = callGeminiAPI(userMessage);
+        return createJsonResponse(true, aiResponse);
+      } catch (error) {
+        console.error("Gemini API Error: " + error.toString());
+        return createJsonResponse(false, "Sorry, my AI systems are momentarily down. Please try again later!");
+      }
     }
     
     // Extract form fields with fallbacks for optional parameters
@@ -305,3 +330,64 @@ function sendWhatsAppNotification(name, email, phone, subject, message) {
 function authorizeExternalAPI() {
   UrlFetchApp.fetch("https://api.telegram.org/");
 }
+
+// ==========================================
+// GEMINI AI INTEGRATION
+// ==========================================
+function callGeminiAPI(userMessage) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${CONFIG.GEMINI_API_KEY}`;
+  
+  const systemPrompt = `You are the personal AI assistant for Manish Pandey (also known as HMPManish). 
+Manish is a highly skilled Software Engineer and AI Enthusiast based in Gonda, Uttar Pradesh, India.
+He specializes in Full Stack Web Development (React, Node.js), AI/ML, and SaaS products.
+Some of his top projects include:
+- Bharat MSME AI Manager
+- Sharda Connect
+- Fake Login Detector
+- Krishi Sewa
+- Motion Tracking System
+
+Keep your answers concise, professional, friendly, and helpful. Use some emojis where appropriate. 
+If someone asks to hire him, tell them to use the contact form below or email hmpmanish@gmail.com.
+If someone asks something completely unrelated to Manish, technology, or web development, politely redirect the conversation back to Manish's skills and projects.`;
+
+  const payload = {
+    "system_instruction": {
+      "parts": { "text": systemPrompt }
+    },
+    "contents": [
+      {
+        "parts": [
+          { "text": userMessage }
+        ]
+      }
+    ],
+    "generationConfig": {
+      "temperature": 0.7,
+      "maxOutputTokens": 300
+    }
+  };
+  
+  const options = {
+    "method": "post",
+    "contentType": "application/json",
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+  
+  const response = UrlFetchApp.fetch(url, options);
+  const responseCode = response.getResponseCode();
+  const responseBody = response.getContentText();
+  
+  if (responseCode === 200) {
+    const json = JSON.parse(responseBody);
+    if (json.candidates && json.candidates.length > 0) {
+      return json.candidates[0].content.parts[0].text;
+    } else {
+      throw new Error("No candidates found in Gemini response.");
+    }
+  } else {
+    throw new Error(`Gemini API returned ${responseCode}: ${responseBody}`);
+  }
+}
+

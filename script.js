@@ -609,61 +609,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if(aiClose) aiClose.addEventListener('click', () => aiWidget.classList.remove('active'));
 
-    // AI Knowledge Base (Rule-Based Engine with Hinglish & Typo tolerance)
-    function getAiResponse(input) {
-        // Remove extra spaces, special chars, and make lowercase
-        let q = input.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, ' ').trim();
-        
-        // Greetings & Hinglish Hello
-        if (q.match(/^(hi|hey|hello|namaste|pranam|helo|hii+)/) || q.includes('kaise ho') || q.includes('kya haal') || q.includes('aur sunao') || q.includes('ki haal')) {
-            return "Hello there! 👋 Main ekdum badhiya hu! Aap batayein main aapki kaise madad kar sakta hu? Aap mujhse Manish ke skills, projects, ya contact details ke baare mein puch sakte hain.";
-        }
-        // Who is Manish
-        else if (q.match(/(who|kaun|tell me about) (is )?(manish|hmp|you)/) || q.includes('about yourself') || q.includes('who are you') || q.includes('tum kaun ho')) {
-            return "Manish Pandey is a highly skilled **Full Stack Developer** and **AI Enthusiast** based in Mumbai. He specializes in building scalable web applications and intelligent systems. 🚀";
-        }
-        // Skills & Tech Stack (with typo tolerance: skil, skils, tech stac)
-        else if (q.match(/skil|stac|lang|sikh|aata hai|kya kya/)) {
-            return "Manish is proficient in:\n<ul><li>**Frontend**: HTML, CSS, JS, React, Tailwind</li><li>**Backend**: Node.js, Python, Django, SQL/NoSQL</li><li>**AI**: Machine Learning, NLP, Computer Vision</li></ul>";
-        }
-        // Projects & Portfolio (with typo tolerance: proj, portfolo)
-        else if (q.match(/proj|portfol|work|kaam/)) {
-            return "Some of Manish's top projects include:\n- **Pandey Traders App**: A full-featured E-commerce app\n- **AI Image Generator**: A stable diffusion implementation\n- **Smart Chatbots**: Context-aware AI assistants\nCheck out the Projects section for more!";
-        }
-        // GitHub
-        else if (q.match(/git|repo|code/)) {
-            return "You can check out his open-source work on GitHub at [github.com/hmpmanish](https://github.com/hmpmanish). He has dozens of repositories with high-quality code!";
-        }
-        // Contact (with typo tolerance: conect, coonect, contac, msg, baat)
-        else if (q.match(/contact|conect|coonect|email|hire|message|msg|baat/)) {
-            return "Aap unhe aasaani se contact kar sakte hain! Ya to niche diye gaye **Contact Form** ka use karein, ya directly type karein **'Send message: [aapka message]'** aur main unhe abhi bhej dunga!";
-        }
-        // Direct Webhook Messaging
-        else if (q.startsWith('send message')) {
-            const msg = input.substring(13).trim();
-            if(msg.length < 5) return "Please thoda detail mein message likhein taaki Manish samajh sakein!";
-            
-            const formData = new FormData();
-            formData.append('name', 'AI Widget User');
-            formData.append('email', 'ai-widget@visitor.com');
-            formData.append('subject', 'Message via AI Widget');
-            formData.append('message', msg);
-            formData.append('language', navigator.language || 'en');
-            
-            if(typeof WEB_APP_URL !== 'undefined') {
-                fetch(WEB_APP_URL, { method: 'POST', body: new URLSearchParams(formData) }).catch(e=>console.error(e));
-            }
-            return "✅ **Message sent!** Manish will receive this notification on his phone shortly.";
-        }
-        // Thank you
-        else if (q.match(/thank|dhanyawad|shukriya|tnx|thx/)) {
-            return "You're welcome! Koi aur sawal ho to zaroor puche.";
-        }
-        // Fallback
-        else {
-            return "I'm still learning! 🤖 Mujhe jyadatar Manish ke **Skills**, **Projects**, aur **Contact info** ke baare mein hi pata hai. Aap inme se kuch puch sakte hain, ya directly contact form use kar sakte hain.";
-        }
-    }
+    // Apps Script Backend URL
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGWiI1eFNtEuF4cRzaW3fZT2SteIBMGvEV1Cvoyrur_aJa0QtZIVPTKtAaucy8SkYY/exec";
 
     // Parse simple markdown (bold, links)
     function parseMarkdown(text) {
@@ -672,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return html;
     }
     
-    function sendAiMsg(customText = null) {
+    async function sendAiMsg(customText = null) {
         if(aiIsTyping) return; // Prevent spamming
         
         const text = customText || aiInput.value.trim();
@@ -695,24 +642,46 @@ document.addEventListener('DOMContentLoaded', () => {
         aiBody.appendChild(typingIndicator);
         aiBody.scrollTop = aiBody.scrollHeight;
         
-        // Calculate dynamic delay based on response length
-        const responseText = getAiResponse(text);
-        const delay = Math.max(800, Math.min(2500, responseText.length * 15));
-        
-        setTimeout(() => {
+        try {
+            const formData = new FormData();
+            formData.append('action', 'chat');
+            formData.append('message', text);
+            
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            });
+            
+            const result = await response.json();
+            
             // Remove typing indicator
             if(aiBody.contains(typingIndicator)) aiBody.removeChild(typingIndicator);
             
             // Add System Message
             const sysMsg = document.createElement('div');
             sysMsg.className = 'ai-msg ai-sys';
-            sysMsg.innerHTML = parseMarkdown(responseText);
+            
+            if (result.success) {
+                sysMsg.innerHTML = parseMarkdown(result.message);
+            } else {
+                sysMsg.innerText = "Error: " + result.message;
+            }
+            
             aiBody.appendChild(sysMsg);
             aiBody.scrollTop = aiBody.scrollHeight;
-            
             playClickSound(); // notification sound
+        } catch (error) {
+            console.error("AI Chat Error:", error);
+            if(aiBody.contains(typingIndicator)) aiBody.removeChild(typingIndicator);
+            
+            const sysMsg = document.createElement('div');
+            sysMsg.className = 'ai-msg ai-sys';
+            sysMsg.innerText = "Network error. Please try again later.";
+            aiBody.appendChild(sysMsg);
+            aiBody.scrollTop = aiBody.scrollHeight;
+        } finally {
             aiIsTyping = false;
-        }, delay);
+        }
     }
     
     // Quick Action Chips
@@ -753,7 +722,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // CONTACT FORM GOOGLE APPS SCRIPT INTEGRATION
     // =========================================================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGWiI1eFNtEuF4cRzaW3fZT2SteIBMGvEV1Cvoyrur_aJa0QtZIVPTKtAaucy8SkYY/exec";
     
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submitBtn');
