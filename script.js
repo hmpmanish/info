@@ -609,30 +609,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if(aiClose) aiClose.addEventListener('click', () => aiWidget.classList.remove('active'));
 
-    // AI Knowledge Base (Rule-Based Engine)
+    // AI Knowledge Base (Rule-Based Engine with Hinglish & Typo tolerance)
     function getAiResponse(input) {
-        const q = input.toLowerCase();
+        // Remove extra spaces, special chars, and make lowercase
+        let q = input.toLowerCase().replace(/[^\w\s]/gi, '').replace(/\s+/g, ' ').trim();
         
-        if (q.includes('who is') || q.includes('about manish') || q.includes('who are you')) {
+        // Greetings & Hinglish Hello
+        if (q.match(/^(hi|hey|hello|namaste|pranam|helo|hii+)/) || q.includes('kaise ho') || q.includes('kya haal') || q.includes('aur sunao') || q.includes('ki haal')) {
+            return "Hello there! 👋 Main ekdum badhiya hu! Aap batayein main aapki kaise madad kar sakta hu? Aap mujhse Manish ke skills, projects, ya contact details ke baare mein puch sakte hain.";
+        }
+        // Who is Manish
+        else if (q.match(/(who|kaun|tell me about) (is )?(manish|hmp|you)/) || q.includes('about yourself') || q.includes('who are you') || q.includes('tum kaun ho')) {
             return "Manish Pandey is a highly skilled **Full Stack Developer** and **AI Enthusiast** based in Mumbai. He specializes in building scalable web applications and intelligent systems. 🚀";
         }
-        else if (q.includes('skill') || q.includes('tech stack') || q.includes('languages') || q.includes('top skill')) {
+        // Skills & Tech Stack (with typo tolerance: skil, skils, tech stac)
+        else if (q.match(/skil|stac|lang|sikh|aata hai|kya kya/)) {
             return "Manish is proficient in:\n<ul><li>**Frontend**: HTML, CSS, JS, React, Tailwind</li><li>**Backend**: Node.js, Python, Django, SQL/NoSQL</li><li>**AI**: Machine Learning, NLP, Computer Vision</li></ul>";
         }
-        else if (q.includes('project') || q.includes('work') || q.includes('portfolio')) {
+        // Projects & Portfolio (with typo tolerance: proj, portfolo)
+        else if (q.match(/proj|portfol|work|kaam/)) {
             return "Some of Manish's top projects include:\n- **Pandey Traders App**: A full-featured E-commerce app\n- **AI Image Generator**: A stable diffusion implementation\n- **Smart Chatbots**: Context-aware AI assistants\nCheck out the Projects section for more!";
         }
-        else if (q.includes('github') || q.includes('repo')) {
+        // GitHub
+        else if (q.match(/git|repo|code/)) {
             return "You can check out his open-source work on GitHub at [github.com/hmpmanish](https://github.com/hmpmanish). He has dozens of repositories with high-quality code!";
         }
-        else if (q.includes('contact') || q.includes('email') || q.includes('hire') || q.includes('message') || q.includes('send email')) {
-            return "You can easily reach out to him via the **Contact Form** at the bottom of the page, or email him directly. I can also send him a message for you right now! Just type **'Send message: [your message]'**.";
+        // Contact (with typo tolerance: conect, coonect, contac, msg, baat)
+        else if (q.match(/contact|conect|coonect|email|hire|message|msg|baat/)) {
+            return "Aap unhe aasaani se contact kar sakte hain! Ya to niche diye gaye **Contact Form** ka use karein, ya directly type karein **'Send message: [aapka message]'** aur main unhe abhi bhej dunga!";
         }
-        else if (q.startsWith('send message:')) {
+        // Direct Webhook Messaging
+        else if (q.startsWith('send message')) {
             const msg = input.substring(13).trim();
-            if(msg.length < 5) return "Please write a bit more so Manish understands your message!";
+            if(msg.length < 5) return "Please thoda detail mein message likhein taaki Manish samajh sakein!";
             
-            // Trigger contact form webhook directly!
             const formData = new FormData();
             formData.append('name', 'AI Widget User');
             formData.append('email', 'ai-widget@visitor.com');
@@ -640,21 +650,18 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('message', msg);
             formData.append('language', navigator.language || 'en');
             
-            // We use the WEB_APP_URL defined later in the script
             if(typeof WEB_APP_URL !== 'undefined') {
                 fetch(WEB_APP_URL, { method: 'POST', body: new URLSearchParams(formData) }).catch(e=>console.error(e));
             }
-            
             return "✅ **Message sent!** Manish will receive this notification on his phone shortly.";
         }
-        else if (q.includes('hello') || q.includes('hi ') || q === 'hi' || q.includes('hey')) {
-            return "Hello there! 👋 How can I help you today? You can ask me about Manish's skills, projects, or how to contact him.";
+        // Thank you
+        else if (q.match(/thank|dhanyawad|shukriya|tnx|thx/)) {
+            return "You're welcome! Koi aur sawal ho to zaroor puche.";
         }
-        else if (q.includes('thank')) {
-            return "You're welcome! Let me know if there is anything else you need.";
-        }
+        // Fallback
         else {
-            return "I'm still learning! 🤖 I am best at answering questions about Manish's **Skills**, **Projects**, or **Contact info**. Feel free to try one of those, or use the contact form to reach him directly.";
+            return "I'm still learning! 🤖 Mujhe jyadatar Manish ke **Skills**, **Projects**, aur **Contact info** ke baare mein hi pata hai. Aap inme se kuch puch sakte hain, ya directly contact form use kar sakte hain.";
         }
     }
 
