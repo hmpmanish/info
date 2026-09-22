@@ -213,67 +213,81 @@ function sendAutoReply(name, email, phone, subject, message) {
   // Plain text fallback
   const textBody = `Hello ${name},\n\nThank you for contacting us. We have successfully received your message.\n\nHere are the details you submitted:\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nSubject: ${subject}\nMessage: ${message}\n\nOur team will review your request and get back to you as soon as possible.\n\nBest regards,\n${CONFIG.MY_NAME}\n${CONFIG.WEBSITE_NAME}`;
 
-  // Beautiful HTML Email Template (Brand style)
+  // Beautiful HTML Email Template (Ultra Premium Dark Style)
   const htmlBody = `
-  <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 20px; border-radius: 12px;">
+  <div style="font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; background-color: #020617; padding: 30px; border-radius: 16px; color: #e2e8f0;">
     
-    <!-- Header with Logo -->
-    <div style="background-color: #070a13; padding: 35px 20px; text-align: center; border-radius: 12px 12px 0 0;">
-      <!-- Hosted Logo from GitHub -->
-      <img src="https://raw.githubusercontent.com/hmpmanish/info/main/WhatsApp%20Image%202026-09-14%20at%206.15.11%20PM.jpeg" alt="${CONFIG.WEBSITE_NAME} Logo" style="max-height: 80px; width: auto; margin-bottom: 15px;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; display: none;">${CONFIG.WEBSITE_NAME}</h1>
+    <!-- Header -->
+    <div style="text-align: center; padding-bottom: 25px; border-bottom: 1px solid #1e293b;">
+      <img src="https://raw.githubusercontent.com/hmpmanish/info/main/WhatsApp%20Image%202026-09-14%20at%206.15.11%20PM.jpeg" alt="${CONFIG.WEBSITE_NAME} Logo" style="max-height: 90px; border-radius: 50%; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); margin-bottom: 15px;">
+      <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;">${CONFIG.WEBSITE_NAME}</h1>
+      <p style="color: #00E5FF; margin: 5px 0 0 0; font-size: 14px; font-weight: 600; letter-spacing: 2px;">SOFTWARE ENGINEER & AI EXPERT</p>
     </div>
     
     <!-- Body -->
-    <div style="background-color: #ffffff; padding: 40px 30px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
-      <h2 style="color: #0f172a; font-size: 22px; margin-top: 0; margin-bottom: 15px;">Hi ${name},</h2>
-      <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-        Thank you for reaching out! We have successfully received your message. Our team is carefully reviewing your request and will get back to you as soon as possible.
+    <div style="padding: 35px 20px;">
+      <h2 style="color: #f8fafc; font-size: 22px; font-weight: 700; margin-top: 0; margin-bottom: 20px;">Hello ${name} 👋,</h2>
+      <p style="color: #94a3b8; font-size: 16px; line-height: 1.7; margin-bottom: 30px;">
+        Thank you for reaching out! Your message has safely landed in my primary inbox. I'm currently reviewing your request and will get back to you with a personalized response very soon.
       </p>
       
-      <!-- Summary Box -->
-      <div style="background-color: #f1f5f9; padding: 25px; border-radius: 8px; border-left: 4px solid #4f46e5; margin-bottom: 30px;">
-        <h3 style="color: #334155; font-size: 14px; margin-top: 0; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Message Details</h3>
-        <p style="color: #475569; margin: 8px 0; font-size: 15px;"><strong>Email:</strong> ${email}</p>
-        <p style="color: #475569; margin: 8px 0; font-size: 15px;"><strong>Phone:</strong> ${phone}</p>
-        <p style="color: #475569; margin: 8px 0; font-size: 15px;"><strong>Subject:</strong> ${subject}</p>
-        <p style="color: #475569; margin: 15px 0 5px 0; font-size: 15px;"><strong>Message:</strong></p>
-        <div style="color: #334155; font-size: 15px; background: #ffffff; padding: 15px; border-radius: 6px; border: 1px solid #cbd5e1; white-space: pre-wrap; font-style: italic;">"${message}"</div>
+      <!-- Summary Box (Glassmorphism inspired) -->
+      <div style="background: linear-gradient(145deg, #0f172a, #1e293b); padding: 25px; border-radius: 12px; border-left: 4px solid #00E5FF; margin-bottom: 35px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);">
+        <h3 style="color: #00E5FF; font-size: 13px; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #334155; padding-bottom: 10px;">Transmission Details</h3>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 0; color: #cbd5e1; font-size: 15px; width: 80px;"><strong>Email:</strong></td>
+            <td style="padding: 8px 0; color: #f8fafc; font-size: 15px;">${email}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #cbd5e1; font-size: 15px;"><strong>Phone:</strong></td>
+            <td style="padding: 8px 0; color: #f8fafc; font-size: 15px;">${phone}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; color: #cbd5e1; font-size: 15px;"><strong>Subject:</strong></td>
+            <td style="padding: 8px 0; color: #f8fafc; font-size: 15px;">${subject}</td>
+          </tr>
+        </table>
+        
+        <div style="margin-top: 20px;">
+          <strong style="color: #cbd5e1; font-size: 15px; display: block; margin-bottom: 10px;">Message:</strong>
+          <div style="color: #94a3b8; font-size: 15px; background: #0b1120; padding: 18px; border-radius: 8px; border: 1px solid #1e293b; white-space: pre-wrap; font-style: italic; line-height: 1.6;">"${message}"</div>
+        </div>
       </div>
       
       <!-- Signature -->
-      <p style="color: #475569; font-size: 16px; line-height: 1.6; margin-bottom: 0;">
-        Best regards,<br>
-        <strong style="color: #0f172a;">${CONFIG.MY_NAME}</strong><br>
-        <span style="color: #64748b; font-size: 14px;">BUILD • CODE • INNOVATE</span>
-      </p>
+      <div style="margin-top: 40px; border-top: 1px solid #1e293b; padding-top: 30px;">
+        <p style="color: #94a3b8; font-size: 16px; line-height: 1.6; margin: 0;">
+          Best regards,<br>
+          <strong style="color: #f8fafc; font-size: 18px; display: inline-block; margin-top: 8px;">${CONFIG.MY_NAME}</strong><br>
+          <span style="color: #00E5FF; font-size: 13px; font-weight: 600; letter-spacing: 1px;">BUILD • CODE • INNOVATE</span>
+        </p>
+      </div>
     </div>
     
     <!-- Footer with Social Media -->
-    <div style="text-align: center; padding: 25px 20px 10px 20px;">
+    <div style="background-color: #0f172a; border-radius: 12px; text-align: center; padding: 25px 20px;">
       
-      <!-- Social Media Icons (Update the href links with your actual profile URLs) -->
+      <!-- Social Media Icons (Premium Monotone/Glow style) -->
       <div style="margin-bottom: 20px;">
-        <a href="https://linkedin.com/in/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
-          <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 24px; height: 24px;">
+        <a href="https://linkedin.com/in/hmpmanish" target="_blank" style="display: inline-block; margin: 0 12px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" style="width: 24px; height: 24px; filter: grayscale(100%) brightness(200%);">
         </a>
-        <a href="https://github.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
-          <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub" style="width: 24px; height: 24px;">
+        <a href="https://github.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 12px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub" style="width: 24px; height: 24px; filter: invert(1);">
         </a>
-        <a href="https://twitter.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
-          <img src="https://cdn-icons-png.flaticon.com/512/733/733590.png" alt="Twitter" style="width: 24px; height: 24px;">
+        <a href="https://twitter.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 12px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/733/733590.png" alt="Twitter" style="width: 24px; height: 24px; filter: grayscale(100%) brightness(200%);">
         </a>
-        <a href="https://instagram.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
-          <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="width: 24px; height: 24px;">
-        </a>
-        <a href="https://youtube.com/c/hmpmanish" target="_blank" style="display: inline-block; margin: 0 8px; text-decoration: none;">
-          <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" style="width: 24px; height: 24px;">
+        <a href="https://instagram.com/hmpmanish" target="_blank" style="display: inline-block; margin: 0 12px; text-decoration: none;">
+          <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram" style="width: 24px; height: 24px; filter: grayscale(100%) brightness(200%);">
         </a>
       </div>
 
-      <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin: 0;">
-        This is an automated response. Please do not reply directly to this email.<br>
-        &copy; ${new Date().getFullYear()} ${CONFIG.WEBSITE_NAME}. All rights reserved.
+      <p style="color: #64748b; font-size: 12px; line-height: 1.6; margin: 0;">
+        This is an automated system transmission. Please do not reply directly to this email.<br>
+        &copy; ${new Date().getFullYear()} ${CONFIG.WEBSITE_NAME}. All systems operational.
       </p>
     </div>
     
