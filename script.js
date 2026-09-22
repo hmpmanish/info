@@ -748,8 +748,45 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(contactForm);
 
             submitBtn.disabled = true;
-            submitBtnText.textContent = "Sending...";
+            submitBtnText.textContent = "Processing...";
             statusMessage.style.display = 'none';
+
+            // Process file attachment if exists
+            const fileInput = document.getElementById('attachment');
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    showStatusMessage('error', 'Attachment must be less than 5MB.');
+                    submitBtn.disabled = false;
+                    submitBtnText.textContent = "Send Transmission";
+                    return;
+                }
+                
+                try {
+                    const base64Str = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = error => reject(error);
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    const base64Data = base64Str.split(',')[1];
+                    const mimeType = base64Str.split(';')[0].split(':')[1];
+                    
+                    formData.set('attachmentData', base64Data);
+                    formData.set('attachmentMime', mimeType);
+                    formData.set('attachmentName', file.name);
+                } catch (err) {
+                    console.error("File read error:", err);
+                    showStatusMessage('error', 'Error reading attachment file.');
+                    submitBtn.disabled = false;
+                    submitBtnText.textContent = "Send Transmission";
+                    return;
+                }
+            }
+            formData.delete('attachment'); // Remove the file object itself before urlencoding
+
+            submitBtnText.textContent = "Sending...";
 
             try {
                 const response = await fetch(WEB_APP_URL, {

@@ -1,6 +1,6 @@
 // Configuration variables
 const CONFIG = {
-  MY_EMAIL: "hmpmanish@gmail.com", // REPLACE WITH: Your email address to receive notifications
+  MY_EMAIL: "hmpmanish.dev@gmail.com", // REPLACE WITH: Your email address to receive notifications
   MY_NAME: "HMP Manish",  // REPLACE WITH: Your name or your website's name
   WEBSITE_NAME: "HMP Manish",         // REPLACE WITH: Your website name
   SPREADSHEET_ID: "1Nsos-UUnvDoGIXYtEg-avPmWMAp7xW9svKgIHS9UxB4", // Master Google Sheet ID
@@ -21,7 +21,13 @@ const CONFIG = {
   // ==========================================
   // GEMINI AI SETTINGS
   // ==========================================
-  GEMINI_API_KEY: "YOUR_GEMINI_API_KEY_HERE" // REPLACE WITH: Your Gemini API Key from Google AI Studio
+  GEMINI_API_KEY: "AQ.Ab8RN6JK2-pZ6gPlJp5qAT9il8JsZJhheEOrMXjZ20mB_dd7Qw", // REPLACE WITH: Your Gemini API Key from Google AI Studio
+  
+  // ==========================================
+  // NEW ULTRA PREMIUM SETTINGS
+  // ==========================================
+  DISCORD_WEBHOOK_URL: "", // REPLACE WITH: Your Discord Webhook URL for notifications
+  DRIVE_FOLDER_ID: ""      // REPLACE WITH: Google Drive Folder ID to save attachments
 };
 
 function doPost(e) {
@@ -87,7 +93,23 @@ function doPost(e) {
     const email = e.parameter.email || "";
     const phone = e.parameter.phone || "Not provided";
     const subject = e.parameter.subject || "No subject";
-    const message = e.parameter.message || "";
+    let message = e.parameter.message || "";
+    
+    // Process attachment if provided
+    let attachmentLink = "";
+    if (e.parameter.attachmentData && CONFIG.DRIVE_FOLDER_ID) {
+      try {
+        const decoded = Utilities.base64Decode(e.parameter.attachmentData);
+        const blob = Utilities.newBlob(decoded, e.parameter.attachmentMime || 'application/octet-stream', e.parameter.attachmentName || 'attachment_file');
+        const folder = DriveApp.getFolderById(CONFIG.DRIVE_FOLDER_ID);
+        const file = folder.createFile(blob);
+        attachmentLink = file.getUrl();
+        message += `\n\nAttachment: ${attachmentLink}`;
+      } catch (err) {
+        console.error("Failed to upload attachment: " + err);
+        message += `\n\n[Attachment upload failed: ${err.message}]`;
+      }
+    }
     
     // 1. Validation
     if (name.trim() === "") {
@@ -120,16 +142,22 @@ function doPost(e) {
     }
     
     let chatNotificationStatus = "Skipped";
-    // 3.5 Send Chat Notifications (Telegram / WhatsApp)
+    // 3.5 Send Chat Notifications (Telegram / WhatsApp / Discord)
     try {
+      let sentTo = [];
+      if (CONFIG.DISCORD_WEBHOOK_URL) {
+        sendDiscordNotification(name, email, phone, subject, message);
+        sentTo.push("Discord");
+      }
       if (CONFIG.TELEGRAM_BOT_TOKEN && CONFIG.TELEGRAM_CHAT_ID) {
         sendTelegramNotification(name, email, phone, subject, message);
-        chatNotificationStatus = "Sent (Telegram)";
+        sentTo.push("Telegram");
       }
       if (CONFIG.WHATSAPP_PHONE && CONFIG.WHATSAPP_API_KEY) {
         sendWhatsAppNotification(name, email, phone, subject, message);
-        chatNotificationStatus = "Sent (WhatsApp)";
+        sentTo.push("WhatsApp");
       }
+      if (sentTo.length > 0) chatNotificationStatus = "Sent (" + sentTo.join(", ") + ")";
     } catch (error) {
       chatNotificationStatus = "Error: " + error.message;
       console.error("Chat Notification Error: " + error.message);
@@ -324,6 +352,30 @@ function sendWhatsAppNotification(name, email, phone, subject, message) {
   UrlFetchApp.fetch(url);
 }
 
+// Helper: Send Discord Notification
+function sendDiscordNotification(name, email, phone, subject, message) {
+  const payload = {
+    embeds: [{
+      title: "🚨 New Contact Form Submission",
+      color: 3447003,
+      fields: [
+        { name: "Name", value: name || "N/A", inline: true },
+        { name: "Email", value: email || "N/A", inline: true },
+        { name: "Phone", value: phone || "N/A", inline: true },
+        { name: "Subject", value: subject || "N/A" },
+        { name: "Message", value: message.substring(0, 1024) || "N/A" }
+      ],
+      timestamp: new Date().toISOString()
+    }]
+  };
+  const options = {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(payload)
+  };
+  UrlFetchApp.fetch(CONFIG.DISCORD_WEBHOOK_URL, options);
+}
+
 // ==========================================
 // RUN THIS ONCE TO GRANT PERMISSIONS
 // ==========================================
@@ -335,7 +387,7 @@ function authorizeExternalAPI() {
 // GEMINI AI INTEGRATION
 // ==========================================
 function callGeminiAPI(userMessage) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${CONFIG.GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.GEMINI_API_KEY}`;
   
   const systemPrompt = `You are the personal AI assistant for Manish Pandey (also known as HMPManish). 
 Manish is a highly skilled Software Engineer and AI Enthusiast based in Gonda, Uttar Pradesh, India.
@@ -348,12 +400,25 @@ Some of his top projects include:
 - Motion Tracking System
 
 Keep your answers concise, professional, friendly, and helpful. Use some emojis where appropriate. 
-If someone asks to hire him, tell them to use the contact form below or email hmpmanish@gmail.com.
+If someone asks to hire him, tell them to use the contact form below or email hmpmanish.dev@gmail.com.
 If someone asks something completely unrelated to Manish, technology, or web development, politely redirect the conversation back to Manish's skills and projects.`;
+
+  const tools = [{
+    "functionDeclarations": [
+      {
+        "name": "getManishContactDetails",
+        "description": "Returns the best way to contact Manish Pandey, including email and social media links."
+      },
+      {
+        "name": "getResumeLink",
+        "description": "Returns the URL to view or download Manish Pandey's professional resume."
+      }
+    ]
+  }];
 
   const payload = {
     "system_instruction": {
-      "parts": { "text": systemPrompt }
+      "parts": [ { "text": systemPrompt } ]
     },
     "contents": [
       {
@@ -362,10 +427,7 @@ If someone asks something completely unrelated to Manish, technology, or web dev
         ]
       }
     ],
-    "generationConfig": {
-      "temperature": 0.7,
-      "maxOutputTokens": 300
-    }
+    "tools": tools
   };
   
   const options = {
@@ -382,7 +444,16 @@ If someone asks something completely unrelated to Manish, technology, or web dev
   if (responseCode === 200) {
     const json = JSON.parse(responseBody);
     if (json.candidates && json.candidates.length > 0) {
-      return json.candidates[0].content.parts[0].text;
+      const part = json.candidates[0].content.parts[0];
+      if (part.functionCall) {
+        const fnName = part.functionCall.name;
+        if (fnName === "getManishContactDetails") {
+          return "You can contact me directly at hmpmanish.dev@gmail.com, or use the contact form on this website. You can also connect with me on LinkedIn at https://linkedin.com/in/hmpmanish.";
+        } else if (fnName === "getResumeLink") {
+          return "You can view and download my resume here: https://hmpmanish.github.io/info/resume.html";
+        }
+      }
+      return part.text;
     } else {
       throw new Error("No candidates found in Gemini response.");
     }
@@ -391,3 +462,92 @@ If someone asks something completely unrelated to Manish, technology, or web dev
   }
 }
 
+// ==========================================
+// SCHEDULED TRIGGER FUNCTIONS
+// ==========================================
+
+// Task 3: Send Daily Analytics Summary
+function sendDailySummary() {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sheet = spreadsheet.getSheets()[0];
+  const data = sheet.getDataRange().getValues();
+  
+  if (data.length <= 1) return; // Only headers
+  
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  
+  let visitorsToday = 0;
+  let messagesToday = 0;
+  
+  // Headers are at index 0
+  for (let i = 1; i < data.length; i++) {
+    const rowDate = new Date(data[i][0]);
+    if (rowDate >= today) {
+      const eventType = data[i][1];
+      if (eventType === "Page Visit") {
+        visitorsToday++;
+      } else if (eventType === "Form Submit") {
+        messagesToday++;
+      }
+    }
+  }
+  
+  const subject = `Daily Analytics Summary - ${CONFIG.WEBSITE_NAME}`;
+  const body = `Hello Admin,\n\nHere is your summary for today:\n\nUnique Visitors Today: ${visitorsToday}\nNew Messages Received: ${messagesToday}\n\nKeep up the great work!`;
+  
+  MailApp.sendEmail({
+    to: CONFIG.MY_EMAIL,
+    subject: subject,
+    body: body
+  });
+}
+
+// Task 5: Automated Follow-up System
+function processFollowUps() {
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sheet = spreadsheet.getSheets()[0];
+  const data = sheet.getDataRange().getValues();
+  
+  if (data.length <= 1) return;
+  
+  const now = new Date();
+  const twoDaysAgo = new Date(now.getTime() - (2 * 24 * 60 * 60 * 1000));
+  
+  let headerRow = data[0];
+  let followUpColIdx = headerRow.indexOf("Follow-Up Status");
+  
+  if (followUpColIdx === -1) {
+    followUpColIdx = headerRow.length;
+    sheet.getRange(1, followUpColIdx + 1).setValue("Follow-Up Status");
+    sheet.getRange(1, followUpColIdx + 1).setFontWeight("bold");
+  }
+  
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (row[1] === "Form Submit") {
+      const submitDate = new Date(row[0]);
+      const followUpStatus = row[followUpColIdx];
+      
+      if (submitDate < twoDaysAgo && (!followUpStatus || followUpStatus === "")) {
+        const name = row[2];
+        const email = row[3];
+        
+        const subject = "Following up on your inquiry";
+        const body = `Hi ${name},\n\nI wanted to personally follow up on your recent message. I am currently reviewing your request and will get back to you shortly with more details.\n\nBest regards,\n${CONFIG.MY_NAME}`;
+        
+        try {
+          MailApp.sendEmail({
+            to: email,
+            subject: subject,
+            body: body,
+            name: CONFIG.MY_NAME
+          });
+          sheet.getRange(i + 1, followUpColIdx + 1).setValue("Followed-up");
+        } catch (e) {
+          sheet.getRange(i + 1, followUpColIdx + 1).setValue("Follow-up Failed");
+        }
+      }
+    }
+  }
+}
